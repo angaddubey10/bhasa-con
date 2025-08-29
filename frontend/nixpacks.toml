@@ -18,6 +18,7 @@ cmd = "npm run preview -- --host 0.0.0.0 --port $PORT"
 [variables]
 NODE_ENV = "production"
 NPM_CONFIG_PRODUCTION = "false"
+VITE_API_URL = "https://bc-backend-production-7180.up.railway.app"
 
 [staticAssets]
 "dist" = "/"

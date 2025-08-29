@@ -2,14 +2,9 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
-import os
-from dotenv import load_dotenv
 
 from app.database import engine, Base
 from app.routers import auth, users, posts
-
-# Load environment variables
-load_dotenv()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -30,7 +25,7 @@ app = FastAPI(
 )
 
 # CORS Configuration
-cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
+cors_origins = ["https://bhasa-con-production.up.railway.app"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
