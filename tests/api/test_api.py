@@ -11,11 +11,11 @@ class TestLoginAPI:
     def test_login_successful(self):
         """Test successful login with valid credentials"""
         login_data = {
-            "email": "angad@bc.com",
-            "password": "UTiKY@j5h3R5bZ@"
+            "email": "angad@abc.com",
+            "password": "D$i-RiSWS4HBd6C"
         }
         
-        response = requests.post(f"{self.BASE_URL}/auth/login", json=login_data)
+        response = requests.post(f"{self.BASE_URL}/api/auth/login", json=login_data)
         
         assert response.status_code == 200
         response_json = response.json()
@@ -35,12 +35,12 @@ class TestLoginAPI:
             "email": "wrong@example.com",
             "password": "WrongPassword123"
         }
-        
-        response = requests.post(f"{self.BASE_URL}/auth/login", json=login_data)
-        
+
+        response = requests.post(f"{self.BASE_URL}/api/auth/login", json=login_data)
+
         assert response.status_code == 401
         response_json = response.json()
-        assert "detail" in response_json
+        assert "Invalid email or password" in response_json['error']
 
     def test_login_missing_fields(self):
         """Test login with missing email or password"""
@@ -48,9 +48,9 @@ class TestLoginAPI:
         login_data = {
             "password": "TestPassword123"
         }
-        
-        response = requests.post(f"{self.BASE_URL}/auth/login", json=login_data)
-        
+
+        response = requests.post(f"{self.BASE_URL}/api/auth/login", json=login_data)
+
         assert response.status_code == 422
         response_json = response.json()
         assert "detail" in response_json
