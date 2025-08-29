@@ -79,6 +79,16 @@ Successfully simplified Docker configuration:
 
 - [ ] **Update Error Handling**: Ensure proper error messages are displayed
 
+- [x] **Update Container Names**: Change container names from `bhasaconnect` to `bhcon`
+  - Update db service: `bhasaconnect_db` → `bhcon_db` ✓
+  - Update backend service: `bhasaconnect_backend` → `bhcon_backend` ✓
+  - Update frontend service: `bhasaconnect_frontend` → `bhcon_frontend` ✓
+
+- [x] **Abbreviate Container Names**: Further shorten container names for better usability
+  - Update backend service: `bhcon_backend` → `bhcon_be` ✓
+  - Update frontend service: `bhcon_frontend` → `bhcon_fe` ✓
+  - Keep database service: `bhcon_db` (already concise) ✓
+
 ## Implementation Notes
 
 ### Current State
@@ -92,6 +102,19 @@ Update frontend to match backend API format by:
 1. Making login API call to get token
 2. Making profile API call to get user data
 3. Storing both pieces of information
+
+### Container Name Update (August 29, 2025)
+Successfully updated container names in docker-compose.yml:
+- `bhasaconnect_db` → `bhcon_db`
+- `bhasaconnect_backend` → `bhcon_be` (via bhcon_backend)
+- `bhasaconnect_frontend` → `bhcon_fe` (via bhcon_frontend)
+
+Final container names for maximum brevity:
+- Database: `bhcon_db`
+- Backend: `bhcon_be`
+- Frontend: `bhcon_fe`
+
+Database name `bhasaconnect_dev` intentionally kept unchanged as it doesn't need to match container names.
 
 ## Decisions
 
