@@ -1,10 +1,11 @@
 import React from 'react'
-import { createBrowserRouter, Outlet } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
 import HomePage from '../pages/HomePage'
 import LoginPage from '../pages/LoginPage'
 import RegisterPage from '../pages/RegisterPage'
 import { FeedPage, DiscoveryPage, ProfilePage, SettingsPage } from '../pages/FeedPage'
 import ProtectedRoute from '../components/common/ProtectedRoute'
+import AppLayout from '../components/layout/Layout'
 
 // Route parameter types
 export interface RouteParams {
@@ -12,20 +13,11 @@ export interface RouteParams {
   userId?: string
 }
 
-// Layout component for routes
-const Layout = () => {
-  return React.createElement(
-    'div',
-    { className: 'min-h-screen bg-gray-100' },
-    React.createElement(Outlet)
-  )
-}
-
 // Define typed routes
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: React.createElement(Layout),
+    element: React.createElement(AppLayout),
     children: [
       {
         index: true,

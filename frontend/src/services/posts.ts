@@ -1,12 +1,84 @@
 import { apiClient } from './api'
-import { Post, CreatePostData, UpdatePostData, PaginatedResponse, SearchFilters, SearchResult } from '../types'
-import { API_ENDPOINTS } from '../constants'
+import { Post, CreatePostData, UpdatePostData, PaginatedResponse, SearchFilters, SearchResult, UserProfile } from '../types'
+import { API_ENDPOINTS, PostType, PostStatus } from '../constants'
+
+// Backend post response format
+interface BackendPostResponse {
+  id: string
+  user: {
+    id: string
+    first_name: string
+    last_name: string
+    profile_picture?: string
+    bio: string
+    place?: string
+    state?: string
+    is_following: boolean
+  }
+  content: string
+  language: string
+  image_url?: string
+  like_count: number
+  is_liked: boolean
+  created_at: string
+}
+
+// Transform backend post response to frontend Post type
+const transformBackendPost = (backendPost: BackendPostResponse): Post => {
+  return {
+    id: backendPost.id,
+    authorId: backendPost.user.id,
+    author: {
+      id: backendPost.user.id,
+      email: '', // Not provided by backend in post responses
+      first_name: backendPost.user.first_name,
+      last_name: backendPost.user.last_name,
+      profile_picture: backendPost.user.profile_picture,
+      bio: backendPost.user.bio,
+      languages: [], // Not provided by backend in post responses
+      place: backendPost.user.place,
+      district: '', // Not provided by backend
+      state: backendPost.user.state,
+      email_notifications: true, // Default value
+      created_at: '' // Not provided by backend in post responses
+    },
+    content: backendPost.content,
+    type: PostType.TEXT, // Default type, backend doesn't specify
+    status: PostStatus.PUBLISHED, // Default status
+    mediaUrl: backendPost.image_url,
+    mediaType: backendPost.image_url ? 'image/jpeg' : undefined,
+    linkUrl: undefined, // Backend doesn't provide these yet
+    linkTitle: undefined,
+    linkDescription: undefined,
+    likesCount: backendPost.like_count,
+    commentsCount: 0, // Backend doesn't provide this yet
+    sharesCount: 0, // Backend doesn't provide this yet
+    isLiked: backendPost.is_liked,
+    isBookmarked: false, // Backend doesn't provide this yet
+    tags: [], // Backend doesn't provide tags yet
+    createdAt: backendPost.created_at,
+    updatedAt: backendPost.created_at // Use created_at as default
+  }
+}
 
 export class PostsService {
-  async getPosts(page: number = 1, limit: number = 20): Promise<PaginatedResponse<Post>> {
-    const response = await apiClient.get<PaginatedResponse<Post>>(
+  async getPosts(page: number = 1, limit: number = 20): Promise<any> {
+    const response = await apiClient.get<any>(
       `${API_ENDPOINTS.POSTS.LIST}?page=${page}&limit=${limit}`
     )
+    
+    // Transform backend response to frontend format
+    if (response.data?.data?.items) {
+      const transformedItems = response.data.data.items.map(transformBackendPost)
+      return {
+        ...response.data,
+        data: {
+          ...response.data.data,
+          items: transformedItems
+        }
+      }
+    }
+    
     return response.data
   }
 
@@ -15,17 +87,43 @@ export class PostsService {
     return response.data
   }
 
-  async getUserPosts(userId: string, page: number = 1, limit: number = 20): Promise<PaginatedResponse<Post>> {
-    const response = await apiClient.get<PaginatedResponse<Post>>(
+  async getUserPosts(userId: string, page: number = 1, limit: number = 20): Promise<any> {
+    const response = await apiClient.get<any>(
       `${API_ENDPOINTS.POSTS.LIST}?author=${userId}&page=${page}&limit=${limit}`
     )
+    
+    // Transform backend response to frontend format
+    if (response.data?.data?.items) {
+      const transformedItems = response.data.data.items.map(transformBackendPost)
+      return {
+        ...response.data,
+        data: {
+          ...response.data.data,
+          items: transformedItems
+        }
+      }
+    }
+    
     return response.data
   }
 
-  async getFeedPosts(page: number = 1, limit: number = 20): Promise<PaginatedResponse<Post>> {
-    const response = await apiClient.get<PaginatedResponse<Post>>(
+  async getFeedPosts(page: number = 1, limit: number = 20): Promise<any> {
+    const response = await apiClient.get<any>(
       `${API_ENDPOINTS.POSTS.LIST}/feed?page=${page}&limit=${limit}`
     )
+    
+    // Transform backend response to frontend format
+    if (response.data?.data?.items) {
+      const transformedItems = response.data.data.items.map(transformBackendPost)
+      return {
+        ...response.data,
+        data: {
+          ...response.data.data,
+          items: transformedItems
+        }
+      }
+    }
+    
     return response.data
   }
 

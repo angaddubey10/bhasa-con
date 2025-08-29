@@ -1,22 +1,19 @@
-import { UserRole, PostType, PostStatus, NotificationType, Language } from '../constants'
+import { PostType, PostStatus, NotificationType, Language } from '../constants'
 
 // User types
 export interface User {
   id: string
-  username: string
   email: string
-  firstName: string
-  lastName: string
-  avatar?: string
+  first_name: string
+  last_name: string
+  profile_picture?: string
   bio?: string
-  role: UserRole
-  language: Language
-  isVerified: boolean
-  followersCount: number
-  followingCount: number
-  postsCount: number
-  createdAt: string
-  updatedAt: string
+  languages: string[]
+  place?: string
+  district?: string
+  state?: string
+  email_notifications: boolean
+  created_at: string
 }
 
 export interface UserProfile extends User {
@@ -87,19 +84,57 @@ export interface LoginData {
 }
 
 export interface RegisterData {
-  username: string
   email: string
   password: string
-  firstName: string
-  lastName: string
-  language?: Language
+  first_name: string
+  last_name: string
 }
 
+// Backend API response for register
+export interface RegisterResponse {
+  success: boolean
+  message: string
+  data: {
+    user_id: string
+    email: string
+  }
+}
+
+// Backend API response for login
+export interface LoginResponse {
+  success: boolean
+  message: string
+  data: {
+    access_token: string
+    token_type: string
+  }
+}
+
+// Backend API response for user profile
+export interface ProfileResponse {
+  success: boolean
+  data: {
+    id: string
+    email: string
+    first_name: string
+    last_name: string
+    profile_picture?: string
+    bio?: string
+    languages: string[]
+    place?: string
+    district?: string
+    state?: string
+    email_notifications: boolean
+    created_at: string
+  }
+}
+
+// Combined auth response for internal use
 export interface AuthResponse {
   user: User
   accessToken: string
-  refreshToken: string
-  expiresIn: number
+  refreshToken?: string
+  expiresIn?: number
 }
 
 export interface RefreshTokenResponse {
