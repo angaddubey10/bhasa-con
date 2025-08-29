@@ -1,6 +1,5 @@
 import React from 'react'
-import { createBrowserRouter, RouteObject } from 'react-router-dom'
-import App from '../App'
+import { createBrowserRouter, Outlet } from 'react-router-dom'
 import HomePage from '../pages/HomePage'
 import LoginPage from '../pages/LoginPage'
 import RegisterPage from '../pages/RegisterPage'
@@ -13,11 +12,20 @@ export interface RouteParams {
   userId?: string
 }
 
+// Layout component for routes
+const Layout = () => {
+  return React.createElement(
+    'div',
+    { className: 'min-h-screen bg-gray-100' },
+    React.createElement(Outlet)
+  )
+}
+
 // Define typed routes
-const routes: RouteObject[] = [
+export const router = createBrowserRouter([
   {
     path: '/',
-    element: React.createElement(App),
+    element: React.createElement(Layout),
     children: [
       {
         index: true,
@@ -49,6 +57,4 @@ const routes: RouteObject[] = [
       }
     ]
   }
-]
-
-export const router = createBrowserRouter(routes)
+])

@@ -2,11 +2,9 @@ import { ApiResponse } from '../types'
 import { formatApiUrl } from '../utils'
 
 export class ApiClient {
-  private baseURL: string
   private headers: Record<string, string>
 
   constructor() {
-    this.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
     this.headers = {
       'Content-Type': 'application/json'
     }
