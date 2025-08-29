@@ -1,0 +1,26 @@
+[phases.setup]
+nixPkgs = ["nodejs_18", "npm-9_x"]
+
+[phases.install]
+cmds = [
+    "npm ci --include=dev"
+]
+
+[phases.build] 
+cmds = [
+    "npm run build",
+    "npm prune --omit=dev"
+]
+
+[start]
+cmd = "npm run preview -- --host 0.0.0.0 --port $PORT"
+
+[variables]
+NODE_ENV = "production"
+NPM_CONFIG_PRODUCTION = "false"
+
+[staticAssets]
+"dist" = "/"
+
+[build]
+dockerfile = false

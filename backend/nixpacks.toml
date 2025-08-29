@@ -1,0 +1,33 @@
+[phases.setup]
+nixPkgs = ["python311", "python311Packages.pip", "python311Packages.setuptools", "python311Packages.wheel"]
+nixLibs = ["zlib", "openssl"]
+
+[phases.install]
+cmds = [
+    "pip install --upgrade pip",
+    "pip install --no-cache-dir -r requirements.txt"
+]
+
+[phases.build]
+cmds = [
+    "python -m compileall -b .",
+    "find . -name '*.py' -delete || true"
+]
+
+[start]
+cmd = "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1"
+
+[variables]
+PYTHONPATH = "/app"
+PYTHONUNBUFFERED = "1"
+PYTHONDONTWRITEBYTECODE = "1"
+PIP_NO_CACHE_DIR = "1"
+PIP_DISABLE_PIP_VERSION_CHECK = "1"
+
+[healthcheck]
+path = "/health"
+timeout = 30
+interval = 10
+
+[build]
+dockerfile = false
