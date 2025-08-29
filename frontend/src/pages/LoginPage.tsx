@@ -23,7 +23,7 @@ const LoginPage: React.FC = () => {
     
     try {
       await login(formData)
-      navigate('/')
+      navigate('/feed')
     } catch (error) {
       // Error is handled by auth context
       console.error('Login failed:', error)
