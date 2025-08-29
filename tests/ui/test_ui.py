@@ -3,10 +3,13 @@
 from playwright.sync_api import sync_playwright
 from pages.home_page import HomePage
 from pages.login_page import LoginPage
+from utils import get_test_credentials, get_app_urls
 
 
 def test_home_page_sign_in_navigation():
     """Test opening home page and clicking the Sign In button."""
+    app_urls = get_app_urls()
+    
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
@@ -16,7 +19,7 @@ def test_home_page_sign_in_navigation():
         login_page = LoginPage(page)
         
         # Navigate to home page
-        home_page.navigate("http://localhost:3000")
+        home_page.navigate(app_urls["frontend"])
         
         # Wait for home page to load and verify we're on the right page
         home_page.wait_for_page_load()
@@ -37,17 +40,20 @@ def test_home_page_sign_in_navigation():
 
 def test_login_success():
     """Simple login test using sync_playwright."""
+    app_urls = get_app_urls()
+    credentials = get_test_credentials()
+    
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
-        page.goto("http://localhost:3000/login")  # Adjust URL as needed
+        page.goto(f"{app_urls['frontend']}/login")
         
         # Wait for the page to fully load
         page.wait_for_timeout(3000)
             
-        # Fill in the form using the correct selectors
-        page.fill("#email", "test@example.com")
-        page.fill("#password", "password123")
+        # Fill in the form using the credentials from utils
+        page.fill("#email", credentials["email"])
+        page.fill("#password", credentials["password"])
         page.click("button[type=submit]")
         page.wait_for_timeout(2000)  # Wait for navigation
         
