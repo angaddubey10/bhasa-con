@@ -1,281 +1,283 @@
-Based on your frontend structure, here's a comprehensive set of prompts to convert your JavaScript frontend to TypeScript. I've broken it down into small, manageable tasks:
+# Header Navigation Implementation Workflow
 
-## Configuration & Setup Tasks
+## Analysis
 
-### Task 1: TypeScript Configuration Setup
-**Task:** Set up TypeScript configuration and update build tooling  
-**Target:** @frontend root directory  
-**Context:** Currently using Vite with JavaScript. Need TypeScript support with proper tsconfig.json and updated Vite configuration. Build with `npm run dev` and `npm run build`  
+Current state:
+- No persistent header/navigation component exists
+- Each page (HomePage, FeedPage, LoginPage, RegisterPage) handles navigation independently
+- Missing global navigation, search, notifications, and user menu functionality
+- Router structure exists but lacks layout with persistent header
+- Authentication context is available for user state management
+
+## Plan
+
+### Goal
+Implement a Facebook-like persistent header navigation system with:
+- Logo/brand, search bar, main navigation icons, user menu
+- Responsive design for mobile/desktop
+- Integration with existing authentication and routing
+- Search functionality for users and posts
+- Notifications system foundation
+
+### Implementation Tasks
+
+#### Task 1: Create Header Layout Foundation
+**Task:** Create main Header component with responsive layout structure  
+**Target:** `@frontend/src/components/common/Header.tsx`  
+**Context:** Currently no persistent header exists. Need to create the foundational component with proper Tailwind CSS styling that matches existing design system (blue primary, gray secondary colors from design document).  
 **Requirements:**
-- Install TypeScript and necessary type definitions (@types/react, @types/react-dom)
-- Create tsconfig.json with strict mode enabled
-- Update vite.config.js to handle TypeScript
-- Update package.json scripts if needed
-**Edge Cases:** Ensure hot reload works with .tsx files, handle module resolution for absolute imports  
-**Success Criteria:** Can run `npm run dev` with a .tsx file and see no errors, proper type checking in IDE
+- Fixed header with proper z-index layering
+- Responsive layout (mobile hamburger menu, desktop horizontal nav)
+- Integration with existing Tailwind CSS classes and color scheme
+- TypeScript interfaces for props and state management
+**Edge Cases:** 
+- Header should adapt to different screen sizes gracefully
+- Handle authentication state changes (logged in vs logged out)
+- Maintain proper scroll behavior with fixed positioning
+**Success Criteria:** 
+- Header renders at top of page on all routes
+- Responsive behavior works across breakpoints (sm, md, lg, xl)
+- No layout shift or positioning issues
+- TypeScript compiles without errors
 
-### Task 2: Update Build Files
-**Task:** Convert Vite config and other build files to TypeScript  
-**Target:** @vite.config.js, @postcss.config.cjs, @tailwind.config.js  
-**Context:** Build configuration files are in JavaScript. Convert to TypeScript for consistency. Build with `npm run dev`  
+#### Task 2: Implement Logo and Brand Component
+**Task:** Create logo component with navigation to home/feed based on auth state  
+**Target:** `@frontend/src/components/common/Logo.tsx`  
+**Context:** Need branded logo that redirects authenticated users to /feed and unauthenticated to /. Currently using text-based branding in HomePage.  
 **Requirements:**
-- Convert vite.config.js to vite.config.ts
-- Update postcss and tailwind configs if TypeScript is beneficial
-- Ensure all plugins work correctly
-**Edge Cases:** Handle CJS vs ESM module issues, ensure Docker builds still work  
-**Success Criteria:** Build system works identically to before, configs have proper typing
+- Clickable logo component with proper hover states
+- Conditional routing based on authentication status
+- Consistent with existing "Bhasa Con" branding
+- Accessible with proper ARIA labels
+**Edge Cases:**
+- Handle navigation during loading states
+- Ensure proper focus management for keyboard navigation
+- Handle edge case where auth state is uncertain
+**Success Criteria:**
+- Logo appears in header with proper styling
+- Clicking logo navigates correctly based on auth state
+- Hover and focus states work properly
+- Accessibility audit passes for logo component
 
-### Task 2.1: ESLint and Prettier Configuration
-**Task:** Update linting and formatting for TypeScript  
-**Target:** @.eslintrc, @.prettierrc, @package.json  
-**Context:** Linting rules need TypeScript support. Build with `npm run lint`  
+#### Task 3: Create Search Bar Component
+**Task:** Implement search input with dropdown results for users and posts  
+**Target:** `@frontend/src/components/common/SearchBar.tsx`  
+**Context:** No search functionality exists. Need to create search input with real-time results, debouncing, and proper keyboard navigation. Backend has user and post endpoints that can be leveraged.  
 **Requirements:**
-- Install @typescript-eslint/parser and plugins
-- Update ESLint config for TS rules
-- Configure Prettier for TS formatting
-- Add type-check script to package.json
-**Edge Cases:** Conflicting rules, import sorting, type import preferences  
-**Success Criteria:** Linting works for .ts/.tsx files with appropriate TypeScript rules
+- Debounced search input (300ms delay)
+- Dropdown with user and post results
+- Keyboard navigation (arrow keys, enter, escape)
+- Loading and empty states
+- Integration with existing API services
+**Edge Cases:**
+- Handle network errors gracefully
+- Empty search results state
+- Search input focus/blur behavior with dropdown
+- Handle special characters and search query sanitization
+**Success Criteria:**
+- Search returns relevant users and posts
+- Keyboard navigation works smoothly
+- Debouncing prevents excessive API calls
+- Dropdown closes properly on outside clicks and escape key
 
-## Core Application Tasks
-
-### Task 3: Convert Entry Points
-**Task:** Convert main.jsx and App.jsx to TypeScript  
-**Target:** @src/main.jsx, @src/App.jsx  
-**Context:** Entry point files that bootstrap the React app. Build with `npm run dev`  
+#### Task 4: Create Navigation Icons Component
+**Task:** Build main navigation with Home, Discover, Messages, Notifications icons  
+**Target:** `@frontend/src/components/common/NavIcons.tsx`  
+**Context:** Current routing exists for /feed and /discover routes, but no persistent navigation. Messages and notifications routes need to be added to router. Use consistent icon library (likely Heroicons based on existing usage).  
 **Requirements:**
-- Convert to .tsx extension
-- Add proper types for React.StrictMode and root element
-- Type the App component properly
-**Edge Cases:** Handle potential null root element, ensure error boundaries still work  
-**Success Criteria:** Application starts without TypeScript errors, hot reload works
+- Icon buttons for Home, Discover, Messages, Notifications
+- Active state indication for current route
+- Badge support for notification counts
+- Responsive hiding on mobile (will be in hamburger menu)
+**Edge Cases:**
+- Handle route matching for nested paths
+- Badge count overflow (99+ display)
+- Icon accessibility with proper labels
+- Handle missing/future routes gracefully
+**Success Criteria:**
+- Icons display with proper active states
+- Badge counts work for notifications
+- Clicking icons navigates to correct routes
+- Icons are hidden on mobile and shown on desktop
 
-### Task 3.1: Router Configuration
-**Task:** Convert React Router setup to TypeScript with proper route typing  
-**Target:** @src/router or wherever routes are defined (likely in App.jsx)  
-**Context:** Route configuration needs proper typing for route params, query strings, and navigation. Build with `npm run dev`  
+#### Task 5: Implement User Menu Dropdown
+**Task:** Create user profile dropdown with avatar, name, and menu options  
+**Target:** `@frontend/src/components/common/UserMenu.tsx`  
+**Context:** User data is available through AuthContext. Need dropdown menu with user info, profile link, settings link, and sign out functionality. Currently logout functionality exists in auth service.  
 **Requirements:**
-- Install @types/react-router-dom if using React Router
-- Create typed route definitions
-- Type useParams, useNavigate, useLocation hooks
-- Define route parameter types
-**Edge Cases:** Dynamic routes, optional params, catch-all routes, route guards  
-**Success Criteria:** Navigation is fully typed, route params have IntelliSense
+- User avatar (initials fallback from existing PostCard pattern)
+- Dropdown with Profile, Settings, Sign Out options
+- Click outside to close functionality
+- Integration with existing auth.logout() service
+**Edge Cases:**
+- Handle user data loading states
+- Profile picture fallback to initials
+- Dropdown positioning near viewport edges
+- Handle logout errors gracefully
+**Success Criteria:**
+- User avatar and name display correctly
+- Dropdown opens/closes properly
+- All menu links navigate correctly
+- Sign out functionality works and redirects appropriately
 
-### Task 3.2: Environment Variables Configuration
-**Task:** Create typed environment variable configuration  
-**Target:** @src/config/env.ts (new file) or vite-env.d.ts  
-**Context:** Vite environment variables need typing for IntelliSense. Build with `npm run dev`  
+#### Task 6: Add Create Post Quick Action
+**Task:** Implement floating or header-based create post button  
+**Target:** `@frontend/src/components/common/CreatePostButton.tsx`  
+**Context:** CreatePost component exists in posts/CreatePost.tsx but is only shown on FeedPage. Need quick access button in header that opens modal or navigates to create post.  
 **Requirements:**
-- Type import.meta.env variables
-- Create env validation if needed
-- Update vite-env.d.ts
-**Edge Cases:** Missing env vars, different env modes (dev/prod)  
-**Success Criteria:** Environment variables have full type safety
+- Prominent "+" or "Create" button in header
+- Modal implementation OR navigation to create post
+- Only visible for authenticated users
+- Integration with existing CreatePost component
+**Edge Cases:**
+- Handle modal backdrop clicks and escape key
+- Handle authentication state changes while modal is open
+- Form state preservation if using modal approach
+**Success Criteria:**
+- Button appears only for authenticated users
+- Modal opens/closes properly OR navigation works
+- Create post functionality integrates with existing PostList refresh
+- Button has proper hover and focus states
 
-### Task 3.3: Custom Hooks and Utilities
-**Task:** Convert custom hooks and utility functions to TypeScript  
-**Target:** @src/hooks (if exists), @src/utils (if exists), or any custom hooks in components  
-**Context:** Custom hooks for data fetching, local storage, utility functions, etc. need proper typing. Build with `npm run dev`  
+#### Task 7: Create Mobile Hamburger Menu
+**Task:** Implement collapsible mobile navigation menu  
+**Target:** `@frontend/src/components/common/MobileMenu.tsx`  
+**Context:** Desktop navigation icons need mobile-friendly hamburger menu. Should include all navigation options plus user menu items when authenticated.  
 **Requirements:**
-- Type hook parameters and return values
-- Type any internal state and effects
-- Handle generic hooks properly
-- Type utility function signatures with generics where appropriate
-**Edge Cases:** Conditional hook returns, error states, cleanup functions, functions accepting multiple types  
-**Success Criteria:** All custom hooks and utilities provide proper type inference, no implicit any
+- Hamburger icon that transforms to X when open
+- Slide-in or dropdown mobile menu
+- Include all navigation items plus user menu
+- Proper touch interactions and animations
+**Edge Cases:**
+- Handle orientation changes
+- Prevent background scroll when menu is open
+- Handle menu state during route changes
+- Menu state during authentication changes
+**Success Criteria:**
+- Hamburger menu works smoothly on mobile devices
+- All navigation options are accessible
+- Menu closes after navigation
+- No scroll issues when menu is open
 
-### Task 3.4: Constants and Enums
-**Task:** Create typed constants and enums file  
-**Target:** @src/constants/index.ts (new file)  
-**Context:** Centralize magic strings, numbers, and create enums for better type safety. Build with `npm run dev`  
+#### Task 8: Update Router Layout Structure
+**Task:** Modify router to include Header in layout component  
+**Target:** `@frontend/src/router/index.ts` and create `@frontend/src/components/layout/Layout.tsx`  
+**Context:** Current Layout component in router is minimal. Need to create proper Layout component that includes Header and handles authenticated/unauthenticated states.  
 **Requirements:**
-- Convert magic strings to const assertions
-- Create enums for status codes, user roles, API endpoints
-- Type all exported constants
-- Define string literal types where appropriate
-**Edge Cases:** String literal types vs enums, numeric enums vs string enums, const assertions  
-**Success Criteria:** No magic strings in code, all constants are properly typed with IntelliSense
+- Layout component that includes Header
+- Conditional header display (hide on login/register pages)
+- Proper spacing for fixed header (padding-top)
+- Integration with existing route structure
+**Edge Cases:**
+- Handle routes where header should not appear
+- Handle header height changes on mobile
+- Route transitions with fixed header
+**Success Criteria:**
+- Header appears on all appropriate routes
+- No layout shift or spacing issues
+- Route transitions work smoothly
+- Header responsive behavior works across all pages
 
-## Service Layer Tasks
-
-### Task 4: Convert API Service
-**Task:** Convert base API service to TypeScript with proper typing  
-**Target:** @src/services/api.js  
-**Context:** Base API service handling HTTP requests. Likely uses fetch or axios. Build with `npm run dev`  
+#### Task 9: Add Backend Search Endpoints
+**Task:** Create search API endpoints for users and posts  
+**Target:** `@backend/app/routers/search.py` (new file)  
+**Context:** Need backend endpoints to support frontend search functionality. Current user and post routers exist but no search-specific endpoints with query parameters.  
 **Requirements:**
-- Define types for API responses and errors
-- Create generic request/response types
-- Type all function parameters and returns
-**Edge Cases:** Handle network errors, timeout scenarios, different response types  
-**Success Criteria:** All API calls are type-safe, IntelliSense works for API methods
+- GET /search/users endpoint with query parameter
+- GET /search/posts endpoint with query parameter
+- Pagination support for search results
+- Proper response formatting to match frontend expectations
+**Edge Cases:**
+- Handle empty search queries
+- Search query sanitization and SQL injection prevention
+- Rate limiting for search requests
+- Handle special characters in search terms
+**Success Criteria:**
+- Search endpoints return relevant results
+- Pagination works correctly
+- Query performance is acceptable
+- Proper error handling for invalid queries
 
-### Task 5: Convert Auth Service
-**Task:** Convert authentication service to TypeScript  
-**Target:** @src/services/auth.js  
-**Context:** Handles login, register, token management. Depends on api.js. Build with `npm run dev`  
+#### Task 10: Implement Notifications System Foundation
+**Task:** Create basic notifications backend and frontend structure  
+**Target:** `@backend/app/models/notification.py`, `@backend/app/routers/notifications.py`, `@frontend/src/services/notifications.ts`  
+**Context:** No notification system exists. Need foundational database model, API endpoints, and frontend service for likes, comments, follows notifications.  
 **Requirements:**
-- Define User type interface
-- Type authentication tokens
-- Type all auth-related API calls
-**Edge Cases:** Handle token expiration, invalid credentials, null user states  
-**Success Criteria:** Auth flow is fully typed, no any types used
+- Notification database model (user_id, type, content, read_status, created_at)
+- Basic CRUD API endpoints for notifications
+- Frontend service integration with notification badge
+- Real-time notification count in header badge
+**Edge Cases:**
+- Handle large numbers of notifications (pagination)
+- Notification cleanup/archival strategy
+- Handle notification creation race conditions
+- Database migration for new notification table
+**Success Criteria:**
+- Notifications table created and migrated
+- API endpoints work for creating/reading notifications
+- Badge count updates correctly in header
+- Basic notification list page accessible
 
-### Task 6: Convert Posts Service
-**Task:** Convert posts service to TypeScript  
-**Target:** @src/services/posts.js  
-**Context:** Handles CRUD operations for posts. Depends on api.js. Build with `npm run dev`  
+#### Task 11: Add TypeScript Interfaces and Services
+**Task:** Create comprehensive TypeScript interfaces for header components  
+**Target:** `@frontend/src/types/header.ts`, update `@frontend/src/types/index.ts`  
+**Context:** Need proper TypeScript interfaces for search results, navigation state, user menu options, and notification types.  
 **Requirements:**
-- Define Post interface
-- Type pagination responses
-- Type all post-related API calls
-**Edge Cases:** Handle empty post lists, validation errors, file uploads if any  
-**Success Criteria:** All post operations are type-safe
+- SearchResult interface for unified search results
+- NavigationState for active route tracking
+- NotificationData interface
+- UserMenuProps and HeaderProps interfaces
+**Edge Cases:**
+- Handle optional properties gracefully
+- Ensure backward compatibility with existing types
+- Type safety for API responses
+**Success Criteria:**
+- All header components have proper TypeScript types
+- No TypeScript compilation errors
+- Intellisense works properly for all header components
+- Types align with backend API response formats
 
-## Context Tasks
-
-### Task 7: Convert Auth Context
-**Task:** Convert AuthContext to TypeScript with proper typing  
-**Target:** @src/contexts/AuthContext.jsx  
-**Context:** React Context providing auth state. Uses auth service. Build with `npm run dev`  
+#### Task 12: Responsive Design and Mobile Optimization
+**Task:** Ensure header works perfectly across all device sizes  
+**Target:** All header components for responsive behavior  
+**Context:** Header needs to work on mobile, tablet, and desktop with appropriate breakpoints and touch-friendly interactions.  
 **Requirements:**
-- Define AuthContextType interface
-- Type the context value properly
-- Type the useAuth hook
-**Edge Cases:** Handle loading states, null user, context used outside provider  
-**Success Criteria:** useAuth hook provides full IntelliSense, no implicit any
+- Proper responsive breakpoints (sm: 640px, md: 768px, lg: 1024px)
+- Touch-friendly button sizes (minimum 44px touch targets)
+- Appropriate font sizes and spacing across devices
+- Smooth transitions and animations
+**Edge Cases:**
+- Handle landscape vs portrait orientation changes
+- Very small screens (320px width)
+- Very large screens (4K displays)
+- High DPI display compatibility
+**Success Criteria:**
+- Header looks and functions well on all common device sizes
+- Touch interactions work smoothly on mobile
+- Text remains readable at all screen sizes
+- Performance remains good on lower-end mobile devices
 
-## Component Tasks - Common
+## Implementation Notes
 
-### Task 8: Convert Common Components
-**Task:** Convert Header, LoadingSpinner, and ErrorBoundary to TypeScript  
-**Target:** @src/components/common/Header.jsx, @src/components/common/LoadingSpinner.jsx, @src/components/common/ErrorBoundary.jsx  
-**Context:** Shared UI components used across the app. Build with `npm run dev`  
-**Requirements:**
-- Type all props interfaces
-- Type event handlers
-- ErrorBoundary needs proper error typing
-**Edge Cases:** ErrorBoundary error state typing, Header responsive behavior  
-**Success Criteria:** Components have explicit prop types, no TypeScript errors
+### Dependencies
+- Existing: React, TypeScript, Tailwind CSS, React Router, AuthContext
+- New: Heroicons (for consistent icons), React hooks for dropdown state management
+- Backend: New search router, notifications model and endpoints
 
-### Task 9: Convert ProtectedRoute
-**Task:** Convert ProtectedRoute component to TypeScript  
-**Target:** @src/components/common/ProtectedRoute.jsx  
-**Context:** Route guard component using auth context. Build with `npm run dev`  
-**Requirements:**
-- Type route props
-- Integrate with React Router types
-- Handle redirect logic typing
-**Edge Cases:** Handle loading states, unauthorized access, null routes  
-**Success Criteria:** Route protection works with full type safety
+### Integration Points
+- AuthContext for user state and authentication actions
+- Existing API service for HTTP requests
+- Router for navigation and active route detection
+- Existing PostList component for create post integration
 
-## Component Tasks - Auth
+### Testing Strategy
+- Unit tests for individual header components
+- Integration tests for header with router
+- Responsive design testing across breakpoints
+- Accessibility testing for keyboard navigation and screen readers
 
-### Task 10: Convert Auth Components
-**Task:** Convert LoginForm and RegisterForm to TypeScript  
-**Target:** @src/components/auth/LoginForm.jsx, @src/components/auth/RegisterForm.jsx  
-**Context:** Form components for authentication. Use auth service. Build with `npm run dev`  
-**Requirements:**
-- Type form state and validation
-- Type form submission handlers
-- Type error states
-**Edge Cases:** Form validation errors, network errors, disabled states  
-**Success Criteria:** Forms are fully typed including event handlers
+## Review
 
-## Component Tasks - Posts
+This implementation plan provides granular tasks for creating a comprehensive social media header navigation system. Each task is focused, testable, and builds upon the existing codebase architecture.
 
-### Task 11: Convert Post Components
-**Task:** Convert PostCard and CreatePostForm to TypeScript  
-**Target:** @src/components/posts/PostCard.jsx, @src/components/posts/CreatePostForm.jsx  
-**Context:** Components for displaying and creating posts. Use posts service. Build with `npm run dev`  
-**Requirements:**
-- Use Post type from service
-- Type all props and events
-- Type form state for CreatePostForm
-**Edge Cases:** Empty content, long text truncation, image handling  
-**Success Criteria:** Components use shared Post type, no any types
-
-## Page Component Tasks
-
-### Task 12: Convert Auth Pages
-**Task:** Convert LoginPage and RegisterPage to TypeScript  
-**Target:** @src/pages/LoginPage.jsx, @src/pages/RegisterPage.jsx  
-**Context:** Page components using auth forms. Build with `npm run dev`  
-**Requirements:**
-- Type page props if any
-- Ensure proper integration with typed auth components
-**Edge Cases:** Redirect logic after auth, query parameters  
-**Success Criteria:** Pages work with typed auth flow
-
-### Task 13: Convert Main Pages
-**Task:** Convert HomePage, FeedPage, and DiscoveryPage to TypeScript  
-**Target:** @src/pages/HomePage.jsx, @src/pages/FeedPage.jsx, @src/pages/DiscoveryPage.jsx  
-**Context:** Main content pages using post components. Build with `npm run dev`  
-**Requirements:**
-- Type any page-specific state
-- Type data fetching logic
-- Handle pagination typing
-**Edge Cases:** Empty states, infinite scroll, filters  
-**Success Criteria:** Pages handle posts with full type safety
-
-### Task 14: Convert User Pages
-**Task:** Convert ProfilePage and SettingsPage to TypeScript  
-**Target:** @src/pages/ProfilePage.jsx, @src/pages/SettingsPage.jsx  
-**Context:** User-specific pages. Use auth context and services. Build with `npm run dev`  
-**Requirements:**
-- Type user profile data
-- Type settings form state
-- Type update handlers
-**Edge Cases:** Missing user data, validation errors, file uploads  
-**Success Criteria:** User data flow is fully typed
-
-## Final Tasks
-
-### Task 15: Add Type Declaration Files
-**Task:** Create shared type definitions file  
-**Target:** @src/types/index.ts (new file)  
-**Context:** Need centralized type definitions used across components. Build with `npm run dev`  
-**Requirements:**
-- Extract common interfaces (User, Post, etc.)
-- Define API response types
-- Define common prop types
-**Edge Cases:** Optional fields, union types, generic responses  
-**Success Criteria:** Single source of truth for types, no duplication
-
-### Task 16: Update Docker and CI
-**Task:** Ensure Docker builds work with TypeScript  
-**Target:** @frontend/Dockerfile, @frontend/Dockerfile.dev  
-**Context:** Docker files need to handle TypeScript compilation. Build with `docker-compose build frontend`  
-**Requirements:**
-- Update build steps for TypeScript
-- Ensure production builds work
-- Dev container supports TS hot reload
-**Edge Cases:** Multi-stage builds, node_modules caching  
-**Success Criteria:** Both dev and prod Docker builds work correctly
-
-### Task 16.1: Git Configuration and Package.json Updates
-**Task:** Update git configuration and package.json for TypeScript workflow  
-**Target:** @.gitignore, @package.json  
-**Context:** Ensure TypeScript artifacts are properly handled and add type checking scripts. Build with `npm run type-check`  
-**Requirements:**
-- Add *.tsbuildinfo to .gitignore
-- Add `tsc --noEmit` script for type checking
-- Add `type-check` npm script
-- Consider adding pre-commit hooks for type checking
-- Ensure dist/build folders are ignored
-**Edge Cases:** Generated type files that should be committed, incremental compilation artifacts  
-**Success Criteria:** Type checking works via npm scripts, no TypeScript build artifacts in git
-
-### Task 16.2: Testing Configuration (if tests exist)
-**Task:** Update test configuration for TypeScript support  
-**Target:** Test files and jest/vitest configuration  
-**Context:** Testing framework needs TypeScript support for type-safe tests. Build with `npm test`  
-**Requirements:**
-- Install @types/jest or vitest types as needed
-- Update test config for .ts/.tsx files
-- Convert existing test files to TypeScript
-- Type test utilities and mocks
-**Edge Cases:** Mock typing, test utilities, async tests, component testing with types  
-**Success Criteria:** Tests run with TypeScript files, proper type checking in tests, no any types in test code
-
-Each task is designed to be completed independently while building towards a fully typed TypeScript application. Start with Task 1 (configuration) and proceed sequentially for best results.
+Tasks 1-8 focus on frontend implementation, Tasks 9-10 on backend support, and Tasks 11-12 on polish and optimization. The plan maintains consistency with existing design patterns while adding essential social media functionality.
