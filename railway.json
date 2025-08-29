@@ -1,0 +1,54 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "nixpacks"
+  },
+  "deploy": {
+    "numReplicas": 1,
+    "sleepApplication": false,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  },
+  "services": [
+    {
+      "name": "bhasaconnect-backend",
+      "source": {
+        "type": "repo",
+        "repo": "your-username/bhasa-con",
+        "rootDirectory": "/backend"
+      },
+      "variables": {
+        "PORT": "8000",
+        "PYTHONPATH": "/app"
+      },
+      "build": {
+        "buildCommand": "pip install -r requirements.txt",
+        "watchPatterns": ["backend/**"]
+      },
+      "deploy": {
+        "startCommand": "uvicorn app.main:app --host 0.0.0.0 --port $PORT",
+        "healthcheckPath": "/health",
+        "healthcheckTimeout": 300
+      }
+    },
+    {
+      "name": "bhasaconnect-frontend", 
+      "source": {
+        "type": "repo",
+        "repo": "your-username/bhasa-con",
+        "rootDirectory": "/frontend"
+      },
+      "variables": {
+        "PORT": "3000",
+        "NODE_ENV": "production"
+      },
+      "build": {
+        "buildCommand": "npm ci && npm run build",
+        "watchPatterns": ["frontend/**"]
+      },
+      "deploy": {
+        "startCommand": "npm run preview -- --host 0.0.0.0 --port $PORT"
+      }
+    }
+  ]
+}
