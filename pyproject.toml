@@ -1,0 +1,18 @@
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = """
+    -ra
+    --strict-markers
+    --strict-config
+    --tb=short
+    --browser chromium
+    --headed false
+"""
+testpaths = [
+    "tests",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "ui: marks tests as UI tests",
+    "api: marks tests as API tests",
+]
