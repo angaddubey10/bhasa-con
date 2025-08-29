@@ -36,13 +36,18 @@ export class ApiClient {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new ApiError(data.message || 'An error occurred', response.status.toString())
+        // Backend returns error in { message: "...", detail?: "..." } format
+        throw new ApiError(
+          data.message || data.detail || 'An error occurred', 
+          response.status.toString()
+        )
       }
 
+      // Backend response format is the actual response, not wrapped
       return {
-        data: data.data || data,
+        data: data,
         message: data.message,
-        success: true
+        success: data.success || true
       }
     } catch (error) {
       if (error instanceof ApiError) {

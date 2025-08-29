@@ -11,8 +11,8 @@ class TestLoginAPI:
     def test_login_successful(self):
         """Test successful login with valid credentials"""
         login_data = {
-            "email": "shashank@example.com",
-            "password": "TestPassword123"
+            "email": "angad@bc.com",
+            "password": "UTiKY@j5h3R5bZ@"
         }
         
         response = requests.post(f"{self.BASE_URL}/auth/login", json=login_data)

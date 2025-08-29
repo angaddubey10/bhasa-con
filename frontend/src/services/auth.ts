@@ -1,5 +1,5 @@
 import { apiClient } from './api'
-import { LoginData, RegisterData, AuthResponse, RefreshTokenResponse, User } from '../types'
+import { LoginData, RegisterData, AuthResponse, LoginResponse, ProfileResponse, RegisterResponse, RefreshTokenResponse, User } from '../types'
 import { API_ENDPOINTS } from '../constants'
 import { storage } from '../utils'
 
@@ -9,33 +9,77 @@ export class AuthService {
   private readonly USER_KEY = 'user'
 
   async login(credentials: LoginData): Promise<AuthResponse> {
-    const response = await apiClient.post<AuthResponse>(
+    // Step 1: Get access token
+    const loginResponse = await apiClient.post<LoginResponse>(
       API_ENDPOINTS.AUTH.LOGIN,
       credentials
     )
 
-    if (response.data) {
-      this.setTokens(response.data.accessToken, response.data.refreshToken)
-      this.setUser(response.data.user)
-      apiClient.setAuthToken(response.data.accessToken)
+    if (!loginResponse.data || !loginResponse.data.success) {
+      throw new Error(loginResponse.data?.message || 'Login failed')
     }
 
-    return response.data
+    const accessToken = loginResponse.data.data.access_token
+
+    // Step 2: Set token and get user profile
+    this.setToken(accessToken)
+    apiClient.setAuthToken(accessToken)
+
+    // Step 3: Get user profile
+    const profileResponse = await apiClient.get<ProfileResponse>(
+      API_ENDPOINTS.AUTH.PROFILE
+    )
+
+    if (!profileResponse.data || !profileResponse.data.success) {
+      this.clearAuth()
+      throw new Error('Failed to get user profile')
+    }
+
+    const userData = profileResponse.data.data
+    const user: User = {
+      id: userData.id,
+      email: userData.email,
+      first_name: userData.first_name,
+      last_name: userData.last_name,
+      profile_picture: userData.profile_picture,
+      bio: userData.bio,
+      languages: userData.languages,
+      place: userData.place,
+      district: userData.district,
+      state: userData.state,
+      email_notifications: userData.email_notifications,
+      created_at: userData.created_at
+    }
+
+    this.setUser(user)
+
+    return {
+      user,
+      accessToken,
+      // Note: Backend doesn't provide refresh token yet
+      refreshToken: undefined,
+      expiresIn: undefined
+    }
   }
 
   async register(userData: RegisterData): Promise<AuthResponse> {
-    const response = await apiClient.post<AuthResponse>(
+    // Step 1: Register user
+    const registerResponse = await apiClient.post<RegisterResponse>(
       API_ENDPOINTS.AUTH.REGISTER,
       userData
     )
 
-    if (response.data) {
-      this.setTokens(response.data.accessToken, response.data.refreshToken)
-      this.setUser(response.data.user)
-      apiClient.setAuthToken(response.data.accessToken)
+    if (!registerResponse.data || !registerResponse.data.success) {
+      throw new Error(registerResponse.data?.message || 'Registration failed')
     }
 
-    return response.data
+    // Step 2: Login with the same credentials
+    const loginData: LoginData = {
+      email: userData.email,
+      password: userData.password
+    }
+
+    return await this.login(loginData)
   }
 
   async logout(): Promise<void> {
@@ -77,10 +121,25 @@ export class AuthService {
 
   async getCurrentUser(): Promise<User | null> {
     try {
-      const response = await apiClient.get<User>(API_ENDPOINTS.AUTH.PROFILE)
-      if (response.data) {
-        this.setUser(response.data)
-        return response.data
+      const response = await apiClient.get<ProfileResponse>(API_ENDPOINTS.AUTH.PROFILE)
+      if (response.data && response.data.success) {
+        const userData = response.data.data
+        const user: User = {
+          id: userData.id,
+          email: userData.email,
+          first_name: userData.first_name,
+          last_name: userData.last_name,
+          profile_picture: userData.profile_picture,
+          bio: userData.bio,
+          languages: userData.languages,
+          place: userData.place,
+          district: userData.district,
+          state: userData.state,
+          email_notifications: userData.email_notifications,
+          created_at: userData.created_at
+        }
+        this.setUser(user)
+        return user
       }
     } catch (error) {
       this.clearAuth()
@@ -109,11 +168,6 @@ export class AuthService {
 
   private setToken(token: string): void {
     storage.set(this.TOKEN_KEY, token)
-  }
-
-  private setTokens(accessToken: string, refreshToken: string): void {
-    storage.set(this.TOKEN_KEY, accessToken)
-    storage.set(this.REFRESH_TOKEN_KEY, refreshToken)
   }
 
   private setUser(user: User): void {

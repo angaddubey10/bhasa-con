@@ -1,24 +1,24 @@
 // API constants
 export const API_ENDPOINTS = {
   AUTH: {
-    LOGIN: '/auth/login',
-    REGISTER: '/auth/register',
-    REFRESH: '/auth/refresh',
-    LOGOUT: '/auth/logout',
-    PROFILE: '/auth/profile'
+    LOGIN: '/api/auth/login',
+    REGISTER: '/api/auth/register',
+    REFRESH: '/api/auth/refresh',
+    LOGOUT: '/api/auth/logout',
+    PROFILE: '/api/auth/me'
   },
   POSTS: {
-    LIST: '/posts',
-    CREATE: '/posts',
-    UPDATE: (id: string) => `/posts/${id}`,
-    DELETE: (id: string) => `/posts/${id}`,
-    LIKE: (id: string) => `/posts/${id}/like`,
-    UNLIKE: (id: string) => `/posts/${id}/unlike`
+    LIST: '/api/posts',
+    CREATE: '/api/posts',
+    UPDATE: (id: string) => `/api/posts/${id}`,
+    DELETE: (id: string) => `/api/posts/${id}`,
+    LIKE: (id: string) => `/api/posts/${id}/like`,
+    UNLIKE: (id: string) => `/api/posts/${id}/unlike`
   },
   USERS: {
-    PROFILE: (id: string) => `/users/${id}`,
-    FOLLOW: (id: string) => `/users/${id}/follow`,
-    UNFOLLOW: (id: string) => `/users/${id}/unfollow`
+    PROFILE: (id: string) => `/api/users/${id}`,
+    FOLLOW: (id: string) => `/api/users/${id}/follow`,
+    UNFOLLOW: (id: string) => `/api/users/${id}/unfollow`
   }
 } as const
 

@@ -5,8 +5,6 @@ addopts = """
     --strict-markers
     --strict-config
     --tb=short
-    --browser chromium
-    --headed false
 """
 testpaths = [
     "tests",
