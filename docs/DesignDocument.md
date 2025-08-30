@@ -841,14 +841,14 @@ cd backend
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env  # Configure environment variables
+cp .env.template .env  # Configure environment variables (see docs/EnvironmentSetup.md)
 alembic upgrade head
 uvicorn app.main:app --reload
 
 # Frontend setup (in new terminal)
 cd frontend
 npm install
-cp .env.example .env  # Configure environment variables
+cp .env.template .env  # Configure environment variables (see docs/EnvironmentSetup.md)
 npm run dev
 ```
 

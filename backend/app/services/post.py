@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, and_, desc, or_
-from sqlalchemy.orm import selectinload, joinedload
+from sqlalchemy.orm import joinedload
 from typing import Optional, List
 import uuid
 from app.models.user import User
