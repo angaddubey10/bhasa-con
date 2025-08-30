@@ -2,7 +2,7 @@
 export const formatApiUrl = (endpoint: string): string => {
   const baseUrl = 'https://bc-backend-production-7180.up.railway.app'
   //const baseUrl = 'http://localhost:8000'
-  return baseUrl
+  return `${baseUrl}/${endpoint}`.replace(/\/+/g, '/').replace(/^https?:\/(?!\/)/, 'https://')
 }
 
 // Date utilities
