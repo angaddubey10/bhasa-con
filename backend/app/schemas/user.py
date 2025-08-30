@@ -1,14 +1,47 @@
-from pydantic import BaseModel, EmailStr, field_validator, ConfigDict
+from pydantic import BaseModel, EmailStr, field_validator, ConfigDict, Field
 from typing import List, Optional
 from datetime import date, datetime
 import uuid
 
 
 class UserRegister(BaseModel):
-    email: EmailStr
-    password: str
-    first_name: str
-    last_name: str
+    """User registration schema."""
+    
+    email: EmailStr = Field(
+        ..., 
+        description="Valid email address for the user",
+        example="john.doe@example.com"
+    )
+    password: str = Field(
+        ..., 
+        min_length=8,
+        description="Strong password (min 8 chars, uppercase, lowercase, digit required)",
+        example="SecurePass123"
+    )
+    first_name: str = Field(
+        ..., 
+        min_length=2, 
+        max_length=50,
+        description="User's first name",
+        example="John"
+    )
+    last_name: str = Field(
+        ..., 
+        min_length=2, 
+        max_length=50,
+        description="User's last name", 
+        example="Doe"
+    )
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "email": "john.doe@example.com",
+                "password": "SecurePass123",
+                "first_name": "John",
+                "last_name": "Doe"
+            }
+        }
     
     @field_validator('password')
     @classmethod
@@ -39,8 +72,26 @@ class UserRegister(BaseModel):
 
 
 class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
+    """User login credentials schema."""
+    
+    email: EmailStr = Field(
+        ..., 
+        description="User's registered email address",
+        example="john.doe@example.com"
+    )
+    password: str = Field(
+        ..., 
+        description="User's password",
+        example="SecurePass123"
+    )
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "email": "john.doe@example.com", 
+                "password": "SecurePass123"
+            }
+        }
 
 
 class UserProfile(BaseModel):

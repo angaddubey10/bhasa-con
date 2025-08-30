@@ -26,21 +26,28 @@
 ### Implementation Notes
 Working on Swagger authentication documentation.
 
-**SUCCESS! Authentication now properly configured in Swagger UI**
+**CRITICAL ISSUE FOUND: Production router loading failure (unrelated to authentication)**
 
-**Changes Made:**
-1. Updated `backend/app/main.py` to include custom OpenAPI schema with bearerAuth security scheme
-2. Added HTTPBearer import and security configuration
-3. Created custom_openapi() function to properly define security schemes in OpenAPI documentation
-4. Updated `backend/app/utils/dependencies.py` with better security scheme configuration
+**Root Cause Analysis:**
+- Even with NO custom OpenAPI configuration, production only shows 4/20+ endpoints
+- This indicates a fundamental router loading failure in production environment
+- Issue exists in the base deployment, not related to authentication changes
 
-**Results:**
-- ✅ "Authorize" button now visible in Swagger UI
-- ✅ Protected endpoints properly show `"security":[{"bearerAuth":[]}]` in OpenAPI JSON
-- ✅ JWT Bearer token authentication scheme properly documented
-- ✅ Users can now test protected endpoints through Swagger interface
+**Current Production Issues:**
+1. Only 4 endpoints loading: `/`, `/health`, `/api/posts` (partial), `/api/auth/profile` (partial)
+2. Missing all other authentication endpoints: register, login, me, logout
+3. Missing all user endpoints: profile CRUD, follow/unfollow, search, avatar upload
+4. Missing most post endpoints: CRUD, like/unlike, image upload
 
-**Minor Issue Found**: Some endpoints use "HTTPBearer" while others use "bearerAuth" - should be standardized
+**Likely Causes:**
+- Import dependency failure in production environment
+- Missing packages or environment variables preventing router initialization
+- Silent exception during router loading that doesn't crash the app
+
+**Next Steps:**
+- Add debug logging to router loading
+- Check production logs for import errors
+- Verify all dependencies are available in production environment
 
 **Changes Made:**
 1. Fixed `backend/app/main.py` to properly read CORS_ORIGINS from environment variables instead of hardcoding `["*"]`

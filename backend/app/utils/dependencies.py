@@ -8,10 +8,10 @@ from app.utils.security import verify_token
 from typing import Optional
 
 
-# Security scheme - this will be used by OpenAPI for documentation
+# Security scheme - this will be used by OpenAPI for documentation  
 security = HTTPBearer(
-    scheme_name="bearerAuth",
-    description="Enter JWT token",
+    scheme_name="BearerAuth",
+    description="JWT Bearer token authentication. Format: Bearer <token>",
     bearerFormat="JWT"
 )
 
