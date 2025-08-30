@@ -1,6 +1,75 @@
 # Deploy Branch Workflow
 
-## Current Issue: Missing Authentication in Swagger Documentation
+## Recent Improvement: Main.py Refactoring - COMPLETED
+
+### Analysis
+The main.py file was overly complex with excessive debug logging, hardcoded configurations, and scattered OpenAPI setup. Based on reference code from a production system, several improvements were needed.
+
+### Plan
+- [x] Create proper configuration management system (config.py)
+- [x] Simplify logging setup and remove excessive debug output
+- [x] Improve CORS configuration using settings
+- [x] Add proper global exception handling
+- [x] Clean up startup/shutdown lifecycle management
+- [x] Simplify FastAPI app initialization
+- [x] Remove complex custom OpenAPI configuration (can be re-added later if needed)
+- [x] Use settings-based configuration throughout
+
+### Implementation Notes
+**Major improvements made to main.py:**
+
+1. **Configuration Management**: Created `app/config.py` with a Settings class that:
+   - Manages environment variables centrally
+   - Provides clean CORS origins configuration
+   - Handles application metadata and settings
+   - Uses proper environment-based configuration
+
+2. **Simplified Logging**: 
+   - Removed excessive debug logging that was cluttering production
+   - Clean, professional logging setup
+   - Configurable log level via settings
+
+3. **Better Error Handling**:
+   - Added global exception handler for unhandled exceptions
+   - Maintained HTTP exception handler with consistent format
+   - Proper error logging and user-friendly responses
+
+4. **Clean App Structure**:
+   - Simplified FastAPI app creation
+   - Removed complex custom OpenAPI configuration (can be re-added when needed)
+   - Clean router inclusion without excessive debug logging
+   - Professional startup/shutdown management
+
+5. **Settings-Based Configuration**:
+   - CORS origins from environment variables
+   - Server host/port configuration
+   - Debug mode based on environment
+   - App metadata from settings
+
+### Tasks
+- [x] Create configuration management system
+- [x] Refactor main.py to use settings
+- [x] Simplify logging and remove debug clutter  
+- [x] Add proper exception handling
+- [x] Clean up app initialization
+- [x] Test the improved structure
+
+### Review
+The main.py file is now much cleaner and follows production best practices:
+- Professional structure similar to reference implementation
+- Centralized configuration management
+- Proper error handling and logging
+- Settings-based approach for environment management
+- Eliminated excessive debug logging that was cluttering production
+
+This improvement should help resolve the router loading issues in production by removing the complex debugging code that might have been causing conflicts.
+
+### Decisions
+- Removed complex custom OpenAPI configuration for now (can be re-added later if needed)
+- Used environment-based configuration for better deployment flexibility
+- Maintained all existing functionality while cleaning up the code structure
+
+## Previous Issue: Missing Authentication in Swagger Documentation
 
 ### Analysis
 - Protected endpoints are not showing proper authentication requirements in Swagger UI
