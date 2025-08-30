@@ -14,12 +14,14 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `/api/posts/${id}`,
     LIKE: (id: string) => `/api/posts/${id}/like`,
     UNLIKE: (id: string) => `/api/posts/${id}/like`,
-    UPLOAD_IMAGE: '/api/posts/upload-image'
+    UPLOAD_IMAGE: '/api/posts/upload-image',
+    USER_POSTS: (userId: string) => `/api/posts/user/${userId}`
   },
   USERS: {
+    SEARCH: '/api/users/search',
     PROFILE: (id: string) => `/api/users/${id}`,
     FOLLOW: (id: string) => `/api/users/${id}/follow`,
-    UNFOLLOW: (id: string) => `/api/users/${id}/unfollow`
+    UNFOLLOW: (id: string) => `/api/users/${id}/follow`
   }
 } as const
 

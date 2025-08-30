@@ -1,10 +1,28 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 
 const MobileMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleMobileSearch = () => {
+    const query = searchQuery.trim()
+    if (query.length >= 2) {
+      navigate(`/discover?q=${encodeURIComponent(query)}`)
+      setSearchQuery('')
+      setIsOpen(false)
+    }
+  }
+
+  const handleMobileSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleMobileSearch()
+    }
+  }
 
   const navItems = [
     { path: '/feed', label: 'Home', icon: 'home' },
@@ -54,6 +72,9 @@ const MobileMenu: React.FC = () => {
             <input
               type="text"
               placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleMobileSearchKeyDown}
               className="w-full pl-3 pr-3 py-2 bg-gray-100 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>

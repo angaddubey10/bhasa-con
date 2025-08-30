@@ -1,11 +1,37 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const SearchBar: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState('')
+  const navigate = useNavigate()
+
+  const handleSearch = () => {
+    const query = searchQuery.trim()
+    if (query.length >= 2) {
+      // Navigate to discovery page with search query
+      navigate(`/discover?q=${encodeURIComponent(query)}`)
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleSearch()
+    }
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value)
+  }
+
   return (
     <div className="relative">
       <input
         type="text"
         placeholder="Search Bhasa Con..."
+        value={searchQuery}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
         className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-full text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
       />
       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
