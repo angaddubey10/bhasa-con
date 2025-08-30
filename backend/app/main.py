@@ -19,9 +19,12 @@ async def lifespan(app: FastAPI):
 
 # Create FastAPI app
 app = FastAPI(
-    title="BhasaConnect API",
+    title="Bhasa Con API",
     description="A social media platform connecting users through multiple languages",
-    version="0.1.0",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json",
     lifespan=lifespan
 )
 
@@ -62,6 +65,20 @@ async def http_exception_handler(request, exc):
 @app.get("/health")
 async def health_check():
     return {"status": "healthy", "service": "bhasaconnect-backend"}
+
+# Root endpoint
+@app.get("/")
+async def read_root():
+    return {
+        "message": "Welcome to Bhasa Con API",
+        "version": "1.0.0",
+        "docs": "/docs",
+        "endpoints": {
+            "auth": "/api/auth",
+            "users": "/api/users", 
+            "posts": "/api/posts"
+        }
+    }
 
 # Include routers
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
