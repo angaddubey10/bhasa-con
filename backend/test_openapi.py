@@ -16,7 +16,7 @@ sys.modules['app.database'].Base = Mock()
 sys.modules['app.database'].get_db = Mock()
 
 try:
-    from app.main import app
+    from main import app
     
     # Get the OpenAPI schema
     openapi_schema = app.openapi()
