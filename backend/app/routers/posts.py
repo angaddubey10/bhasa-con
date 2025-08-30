@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File,
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
 import uuid
+import logging
 from app.database import get_db
 from app.schemas.post import PostCreate, PostResponse
 from app.services.post import (
@@ -12,10 +13,17 @@ from app.services.upload import upload_image
 from app.utils.dependencies import get_current_user, get_current_user_optional
 from app.models.user import User
 
+# Configure logging for posts router
+logger = logging.getLogger(__name__)
+logger.info("📝 Posts router module loading...")
+
 router = APIRouter()
+logger.info(f"✅ Posts router created: {router}")
+logger.info("📝 Posts router module loaded successfully")
 
 
 @router.get("/", response_model=dict)
+@router.get("", response_model=dict)
 async def get_posts(
     page: int = Query(1, ge=1, description="Page number"),
     limit: int = Query(20, ge=1, le=50, description="Items per page"),
@@ -38,6 +46,7 @@ async def get_posts(
 
 
 @router.post("/", response_model=dict, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=dict, status_code=status.HTTP_201_CREATED)
 async def create_post_endpoint(
     post_data: PostCreate,
     current_user: User = Depends(get_current_user),
@@ -160,3 +169,15 @@ async def get_user_posts_endpoint(
             "has_next": len(posts) == limit
         }
     }
+
+# Debug: Log all registered routes in this router
+logger.info("=== POSTS ROUTER ENDPOINTS ===")
+endpoint_count = len(router.routes)
+logger.info(f"Posts router has {endpoint_count} endpoints:")
+for i, route in enumerate(router.routes, 1):
+    if hasattr(route, 'methods') and hasattr(route, 'path'):
+        methods = list(route.methods)
+        logger.info(f"{i}. {methods} {route.path}")
+    elif hasattr(route, 'path'):
+        logger.info(f"{i}. {route.path}")
+logger.info("=== END POSTS ROUTER ENDPOINTS ===")

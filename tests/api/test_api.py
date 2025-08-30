@@ -6,7 +6,7 @@ import json
 class TestLoginAPI:
     """Test cases for the login API endpoint"""
     
-    BASE_URL = "http://localhost:8000"
+    BASE_URL = "https://bc-backend-production-7180.up.railway.app"
     
     def test_login_successful(self):
         """Test successful login with valid credentials"""

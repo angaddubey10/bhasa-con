@@ -8,8 +8,12 @@ from app.utils.security import verify_token
 from typing import Optional
 
 
-# Security scheme
-security = HTTPBearer()
+# Security scheme - this will be used by OpenAPI for documentation  
+security = HTTPBearer(
+    scheme_name="BearerAuth",
+    description="JWT Bearer token authentication. Format: Bearer <token>",
+    bearerFormat="JWT"
+)
 
 
 async def get_current_user(

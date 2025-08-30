@@ -13,12 +13,22 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true, // Enable for Docker
+    allowedHosts: [
+      'localhost',
+      '127.0.0.1',
+      'bhasa-con-production.up.railway.app'
+    ],
     watch: {
       usePolling: true, // Enable for Docker on Windows
     }
   },
   preview: {
     port: 3000,
-    host: true
+    host: true,
+    allowedHosts: [
+      'localhost',
+      '127.0.0.1',
+      'bhasa-con-production.up.railway.app'
+    ]
   }
 })
