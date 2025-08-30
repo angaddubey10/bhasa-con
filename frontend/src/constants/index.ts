@@ -8,8 +8,8 @@ export const API_ENDPOINTS = {
     PROFILE: '/api/auth/me'
   },
   POSTS: {
-    LIST: '/api/posts',
-    CREATE: '/api/posts',
+    LIST: '/api/posts/',
+    CREATE: '/api/posts/',
     UPDATE: (id: string) => `/api/posts/${id}`,
     DELETE: (id: string) => `/api/posts/${id}`,
     LIKE: (id: string) => `/api/posts/${id}/like`,

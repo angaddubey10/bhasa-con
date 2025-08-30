@@ -89,9 +89,16 @@ The frontend is getting a 307 Temporary Redirect when making POST requests to `/
 
 ### Plan
 - [x] Identify the source of 307 redirects in POST requests
-- [ ] Fix backend routing to handle trailing slash issue properly  
+- [x] Fix backend routing to handle trailing slash issue properly  
 - [ ] Test that POST requests work without redirects
 - [ ] Update documentation
+
+### Implementation
+**Fixed the 307 redirect issue by adding duplicate route handlers:**
+- Added `@router.get("")` and `@router.post("")` decorators alongside existing `@router.get("/")` and `@router.post("/")` 
+- This allows the backend to handle both `/api/posts` and `/api/posts/` URLs directly
+- Eliminates the need for FastAPI to redirect, preventing the 307 Temporary Redirect response
+- Committed and pushed changes to trigger Railway auto-deployment
 - Settings-based approach for environment management
 - Eliminated excessive debug logging that was cluttering production
 

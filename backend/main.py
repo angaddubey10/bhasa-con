@@ -43,7 +43,9 @@ app = FastAPI(
     title=settings.app_name,
     description=settings.description,
     version=settings.version,
-    lifespan=lifespan
+    lifespan=lifespan,
+    # Disable automatic trailing slash redirects
+    redirect_slashes=False
 )
 
 # Enable CORS
