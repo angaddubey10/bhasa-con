@@ -2,115 +2,125 @@
 
 A TypeScript React frontend with FastAPI backend for language learning community.
 
-## 🚀 Quick Start with Docker
+## 🚀 Quick Start
 
 ### Prerequisites
-- Docker Desktop installed and running
-- Docker Compose available
+- Docker Engine 20.10+ & Docker Compose 2.0+
 
-### Development Build & Run
-
-**Windows:**
+### Run the Application
 ```bash
+# Windows
 run.bat
-```
 
-**Linux/Mac:**
-```bash
-./run.sh
-```
-
-**Manual Docker Commands:**
-```bash
-# Development mode (with hot reload)
+# Linux/Mac  
 docker-compose up --build
 
-# Production mode  
-docker-compose -f docker-compose.prod.yml up --build
+# Manual commands
+docker-compose up --build          # Development
 ```
+
+### Environment Setup
+
+Create your environment configuration files:
+
+```bash
+# Create environment files and configure with your values
+# See docs/EnvironmentSetup.md for all required variables and examples
+touch backend/.env
+touch frontend/.env
+# Edit the files with your actual values, then start services:
+docker-compose up -d
+```
+
+📋 **For detailed environment variables documentation, see [docs/EnvironmentSetup.md](docs/EnvironmentSetup.md)**
 
 ## 🌐 Access Points
 
-- **Frontend:** http://localhost:3000
-- **Backend API:** http://localhost:8000
-- **API Documentation:** http://localhost:8000/docs
+- **Frontend:** http://localhost:3000  
+- **Backend API:** http://localhost:8000  
+- **API Docs:** http://localhost:8000/docs
 
-## 🏗️ Architecture
+## 🏗️ Tech Stack
 
 - **Frontend:** React 18 + TypeScript + Vite + Tailwind CSS
-- **Backend:** FastAPI + Python 3.11
+- **Backend:** FastAPI + Python 3.11 + PostgreSQL
 - **Development:** Docker Compose with hot reload
-- **Production:** Multi-stage Docker builds with Nginx
 
-## 🔧 Development Features
-
-- ✅ TypeScript with strict mode
-- ✅ Hot reload for both frontend and backend
-- ✅ CORS configured for development
-- ✅ Comprehensive type definitions
-- ✅ Error boundaries and loading states
-- ✅ Authentication context ready
-- ✅ Router with protected routes
-
-## 📁 Project Structure
+##  Project Structure
 
 ```
 bhasa-con/
-├── frontend/          # React TypeScript application
-│   ├── src/
-│   │   ├── components/   # Reusable components
-│   │   ├── pages/        # Page components
-│   │   ├── services/     # API services
-│   │   ├── types/        # TypeScript definitions
-│   │   └── utils/        # Utility functions
-│   ├── Dockerfile        # Production build
-│   └── Dockerfile.dev    # Development build
-├── backend/           # FastAPI application  
-│   ├── main.py          # FastAPI app entry point
-│   ├── requirements.txt # Python dependencies
-│   └── Dockerfile       # Backend container
-├── docker-compose.yml      # Development configuration
-├── docker-compose.prod.yml # Production configuration
-└── docs/              # Documentation and workflows
+├── frontend/src/
+│   ├── components/      # Reusable UI components
+│   ├── pages/          # Page components  
+│   ├── services/       # API services
+│   └── types/          # TypeScript definitions
+├── backend/
+│   ├── app/            # FastAPI application
+│   │   ├── models/     # Database models
+│   │   ├── routers/    # API routes
+│   │   └── services/   # Business logic
+│   └── tests/          # Backend tests
+└── docker-compose.yml  # Development setup
 ```
 
-## 🛠️ Commands
+## 🛠️ Common Commands
 
 ```bash
-# Stop all services
-docker-compose down
+# Service management
+docker-compose up -d                    # Start all services
+docker-compose logs -f [service]        # View logs
+docker-compose down                     # Stop services
 
-# View logs
-docker-compose logs -f
+# Development
+docker-compose up --build [service]     # Rebuild service
+docker-compose exec backend pytest     # Run tests
 
-# Rebuild specific service
-docker-compose up --build frontend
-docker-compose up --build backend
-
-# Production build
-docker-compose -f docker-compose.prod.yml up --build
-
-# Clean up containers and volumes
-docker-compose down -v
-docker system prune -f
+# Database
+docker-compose exec backend alembic upgrade head  # Run migrations
+docker-compose exec backend alembic revision --autogenerate -m "Description"
 ```
 
-## 🧪 Testing
+## 🔧 Configuration
 
+### Required Environment Variables
+- `SECRET_KEY`: JWT secret key
+- `POSTGRES_PASSWORD`: Database password  
+- `CLOUDINARY_CLOUD_NAME`: Cloudinary cloud name
+- `CLOUDINARY_API_KEY`: Cloudinary API key
+- `CLOUDINARY_API_SECRET`: Cloudinary API secret
+
+### Optional Variables
+- `POSTGRES_DB`: Database name (default: bhasaconnect)
+- `POSTGRES_USER`: Database user (default: bhasaconnect_user)
+- `VITE_API_URL`: Frontend API URL (default: http://localhost:8000)
+
+## 🔍 Troubleshooting
+
+**Database connection issues:**
 ```bash
-# Type check frontend
-docker-compose exec frontend npm run type-check
-
-# Backend health check
-curl http://localhost:8000/health
+docker-compose logs db
+docker-compose exec backend python -c "from app.database import engine; print('Connection successful')"
 ```
 
-## 📝 Next Steps
+**Port conflicts:**
+Modify port mappings in `docker-compose.yml`:
+```yaml
+services:
+  frontend:
+    ports:
+      - "8080:80"  # Change from 3000:80
+```
 
-1. Implement authentication forms
-2. Add post creation and display components  
-3. Integrate real backend endpoints
-4. Add unit and integration tests
-5. Set up CI/CD pipeline
+## 🚀 Production Deployment
 
-The TypeScript infrastructure is complete and ready for feature development!
+1. Use `docker-compose.yml` for production
+2. Set strong passwords and `ENVIRONMENT=production`
+3. Configure SSL/TLS at load balancer level
+4. Keep Docker images and dependencies updated
+
+## 🔄 Development Workflow
+
+1. Make code changes locally (hot reload enabled)
+2. For database changes: Create and run migrations
+3. Run tests before committing changes

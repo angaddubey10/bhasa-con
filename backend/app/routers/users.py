@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Query
+from fastapi import APIRouter, Depends, UploadFile, File, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List, Optional
+from typing import Optional
 import uuid
 import logging
 from app.database import get_db
-from app.schemas.user import UserProfile, UserResponse, UserListResponse, PasswordUpdate
+from app.schemas.user import UserProfile, PasswordUpdate
 from app.services.user import (
     get_user_by_id, update_user_profile, update_user_password, 
     search_users, follow_user, unfollow_user
