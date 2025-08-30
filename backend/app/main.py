@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer
+from fastapi.openapi.utils import get_openapi
 from contextlib import asynccontextmanager
 
 from app.database import engine, Base
@@ -19,7 +20,7 @@ async def lifespan(app: FastAPI):
     await engine.dispose()
 
 # Security scheme for OpenAPI
-security_scheme = HTTPBearer()
+bearer_scheme = HTTPBearer()
 
 # Create FastAPI app
 app = FastAPI(
@@ -32,36 +33,23 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Add security scheme to OpenAPI
-app.openapi_tags = [
-    {"name": "Authentication", "description": "User authentication endpoints"},
-    {"name": "Users", "description": "User management endpoints"},
-    {"name": "Posts", "description": "Post management endpoints"},
-]
-
-# Define security scheme for OpenAPI documentation
+# Custom OpenAPI schema with security
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
-    
-    from fastapi.openapi.utils import get_openapi
     openapi_schema = get_openapi(
         title=app.title,
         version=app.version,
         description=app.description,
         routes=app.routes,
     )
-    
-    # Add security scheme
     openapi_schema["components"]["securitySchemes"] = {
         "bearerAuth": {
             "type": "http",
             "scheme": "bearer",
-            "bearerFormat": "JWT",
-            "description": "Enter JWT token"
+            "bearerFormat": "JWT"
         }
     }
-    
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 
