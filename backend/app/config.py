@@ -13,7 +13,7 @@ class Settings:
     # Application settings
     app_name: str = "Bhasa Con API"
     version: str = "1.0.0"
-    description: str = "A social media platform connecting users through multiple languages"
+    description: str = "A social media platform connecting users through multiple languages this is to check the latest deployment"
     debug: bool = os.getenv("ENVIRONMENT", "development") == "development"
     
     # Server settings

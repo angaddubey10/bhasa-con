@@ -1,6 +1,7 @@
 // API utilities
 export const formatApiUrl = (endpoint: string): string => {
   const baseUrl = 'https://bc-backend-production-7180.up.railway.app'
+  //const baseUrl = 'http://localhost:8000'
   return `${baseUrl.replace(/\/$/, '')}/${endpoint.replace(/^\//, '')}`
 }
 

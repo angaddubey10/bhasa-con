@@ -152,5 +152,40 @@ Ready to deploy and analyze production logs to identify the router loading failu
 ### Review
 TBD
 
+## Current Issue: Mixed Content Error on Post Creation
+
+### Analysis
+- Frontend (HTTPS) is trying to make HTTP requests to localhost backend
+- Error: "Mixed Content: The page at 'https://bhasa-con-production.up.railway.app/feed' was loaded over HTTPS, but requested an insecure resource 'http://bc-backend-production-7180.up.railway.app/api/posts/'"
+- Frontend utils/index.ts is hardcoded to localhost:8000 instead of production backend URL
+
+### Plan
+- [x] Fix frontend utils/index.ts to use production backend URL
+- [x] Ensure backend URL is HTTPS (not HTTP)
+- [ ] Test post creation functionality
+- [ ] Verify API endpoints work correctly
+
+### Implementation Notes
+The frontend was incorrectly configured to use localhost instead of production backend URL.
+
+**Fixed:**
+```typescript
+// Before (causing Mixed Content error):
+const baseUrl = 'http://localhost:8000'
+
+// After (fixed):
+const baseUrl = 'https://bc-backend-production-7180.up.railway.app'
+```
+
+**Root Cause:** The commented line was the production URL, but the active line was localhost, causing HTTPS frontend to make HTTP requests to localhost instead of the production HTTPS backend.
+
+### Tasks
+- [x] Update frontend/src/utils/index.ts to use production backend URL
+- [ ] Deploy and test post creation
+- [ ] Verify all API calls work with HTTPS backend
+
+### Review
+TBD
+
 ### Decisions
 TBD
