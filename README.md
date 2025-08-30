@@ -24,12 +24,12 @@ docker-compose up --build          # Development
 Create your environment configuration files:
 
 ```bash
-# Create backend environment file
-cp backend/.env.template backend/.env
-# Create frontend environment file  
-cp frontend/.env.template frontend/.env
-# Edit the files with your actual values (see docs/EnvironmentSetup.md for details)
-docker-compose up -d  # Start services
+# Create environment files and configure with your values
+# See docs/EnvironmentSetup.md for all required variables and examples
+touch backend/.env
+touch frontend/.env
+# Edit the files with your actual values, then start services:
+docker-compose up -d
 ```
 
 📋 **For detailed environment variables documentation, see [docs/EnvironmentSetup.md](docs/EnvironmentSetup.md)**

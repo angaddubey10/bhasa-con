@@ -2,10 +2,10 @@
 
 ## Quick Start
 
-1. Create environment files from templates:
+1. Create environment files:
    ```bash
-   cp backend/.env.template backend/.env
-   cp frontend/.env.template frontend/.env
+   touch backend/.env
+   touch frontend/.env
    ```
 
 2. Edit the files with your actual values (see variables below)
