@@ -10,6 +10,8 @@ interface PostCardProps {
 
 export const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete }) => {
   const [isLiking, setIsLiking] = useState(false)
+  const [imageError, setImageError] = useState(false)
+  const [imageLoading, setImageLoading] = useState(true)
 
   const handleLike = async () => {
     if (isLiking) return
@@ -62,13 +64,37 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete }) =>
         
         {/* Media */}
         {post.mediaUrl && (
-          <div className="mt-3">
-            {post.mediaType?.startsWith('image/') ? (
-              <img
-                src={post.mediaUrl}
-                alt="Post media"
-                className="max-w-full h-auto rounded-lg"
-              />
+          <div className="mt-3 relative">
+            {post.mediaType?.startsWith('image/') || !post.mediaType ? (
+              <div className="relative">
+                {imageLoading && (
+                  <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-lg flex items-center justify-center">
+                    <svg className="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                )}
+                {!imageError ? (
+                  <img
+                    src={post.mediaUrl}
+                    alt="Post image"
+                    className="max-w-full h-auto rounded-lg cursor-pointer hover:opacity-95 transition-opacity"
+                    onLoad={() => setImageLoading(false)}
+                    onError={() => {
+                      setImageError(true)
+                      setImageLoading(false)
+                    }}
+                    onClick={() => window.open(post.mediaUrl, '_blank')}
+                  />
+                ) : (
+                  <div className="bg-gray-100 rounded-lg p-8 text-center">
+                    <svg className="w-12 h-12 text-gray-400 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                    </svg>
+                    <p className="text-gray-500 text-sm">Image failed to load</p>
+                  </div>
+                )}
+              </div>
             ) : (
               <video
                 src={post.mediaUrl}
