@@ -1,7 +1,7 @@
 // API utilities
 export const formatApiUrl = (endpoint: string): string => {
-  //const baseUrl = import.meta.env.VITE_API_URL || 'https://bc-backend-production-7180.up.railway.app'
-  const baseUrl = 'http://localhost:8000'
+  const baseUrl = import.meta.env.VITE_API_URL || 'https://bc-backend-production-7180.up.railway.app'
+  //const baseUrl = 'http://localhost:8000'
   return `${baseUrl.replace(/\/$/, '')}/${endpoint.replace(/^\//, '')}`
 }
 
