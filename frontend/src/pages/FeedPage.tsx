@@ -4,7 +4,6 @@ import { CreatePost, PostList } from '../components/posts'
 
 export const FeedPage: React.FC = () => {
   const { isAuthenticated } = useAuth()
-  const [feedType, setFeedType] = useState<'all' | 'following'>('all')
   const [refreshTrigger, setRefreshTrigger] = useState(0)
 
   const handlePostCreated = () => {
@@ -15,37 +14,6 @@ export const FeedPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-2xl mx-auto pt-6 pb-12 px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Feed</h1>
-          
-          {/* Feed Type Selector */}
-          {isAuthenticated && (
-            <div className="flex space-x-1 bg-gray-200 p-1 rounded-lg">
-              <button
-                onClick={() => setFeedType('all')}
-                className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                  feedType === 'all'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                All Posts
-              </button>
-              <button
-                onClick={() => setFeedType('following')}
-                className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                  feedType === 'following'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                Following
-              </button>
-            </div>
-          )}
-        </div>
-
         {/* Create Post */}
         {isAuthenticated && (
           <CreatePost onPostCreated={handlePostCreated} />
@@ -53,7 +21,6 @@ export const FeedPage: React.FC = () => {
 
         {/* Posts List */}
         <PostList 
-          feedType={feedType}
           refreshTrigger={refreshTrigger}
         />
 
