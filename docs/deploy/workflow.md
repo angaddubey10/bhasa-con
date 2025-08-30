@@ -1,5 +1,24 @@
 # Deploy Branch Workflow
 
+## Recent Fix: Mixed Content Issues - COMPLETED
+
+### Analysis
+The frontend was making HTTP requests to the backend instead of HTTPS, causing mixed content security errors. The browser was blocking HTTP requests from the HTTPS frontend application. The issue was traced to hardcoded URLs in the frontend utility function rather than properly using environment variables.
+
+### Implementation
+- **Fixed API URL configuration**: Updated `frontend/src/utils/index.ts` to use `import.meta.env.VITE_API_URL` environment variable
+- **Created proper .env file**: Added `.env` file with correct HTTPS backend URL
+- **Rebuilt frontend**: Regenerated dist files with proper environment variable usage
+- **Verified build output**: Confirmed built JavaScript uses HTTPS URLs only
+
+### Tasks
+- [x] Identify source of mixed content errors  
+- [x] Fix hardcoded HTTP URLs in frontend utility functions
+- [x] Add environment variable usage
+- [x] Create .env file with correct configuration
+- [x] Rebuild and verify frontend build
+- [x] Deploy updated frontend
+
 ## Recent Improvement: Main.py Refactoring - COMPLETED
 
 ### Analysis
@@ -59,6 +78,20 @@ The main.py file is now much cleaner and follows production best practices:
 - Professional structure similar to reference implementation
 - Centralized configuration management
 - Proper error handling and logging
+
+## Current Issue: 307 Redirect on POST /api/posts - IN PROGRESS
+
+### Analysis
+The frontend is getting a 307 Temporary Redirect when making POST requests to `/api/posts`. The issue is:
+- Backend route is defined at `/` in the posts router (which becomes `/api/posts/` with the prefix)  
+- Frontend is calling `/api/posts` (without trailing slash)
+- FastAPI automatically redirects POST `/api/posts` → `/api/posts/` causing a 307 redirect
+
+### Plan
+- [x] Identify the source of 307 redirects in POST requests
+- [ ] Fix backend routing to handle trailing slash issue properly  
+- [ ] Test that POST requests work without redirects
+- [ ] Update documentation
 - Settings-based approach for environment management
 - Eliminated excessive debug logging that was cluttering production
 

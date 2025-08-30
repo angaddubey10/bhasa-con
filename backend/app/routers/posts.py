@@ -23,6 +23,7 @@ logger.info("📝 Posts router module loaded successfully")
 
 
 @router.get("/", response_model=dict)
+@router.get("", response_model=dict)
 async def get_posts(
     page: int = Query(1, ge=1, description="Page number"),
     limit: int = Query(20, ge=1, le=50, description="Items per page"),
@@ -45,6 +46,7 @@ async def get_posts(
 
 
 @router.post("/", response_model=dict, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=dict, status_code=status.HTTP_201_CREATED)
 async def create_post_endpoint(
     post_data: PostCreate,
     current_user: User = Depends(get_current_user),
