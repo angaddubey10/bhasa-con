@@ -11,19 +11,25 @@
 - [x] Check current CORS configuration in FastAPI backend
 - [x] Verify production environment variables and origins
 - [x] Update CORS settings for Railway deployment URLs
+- [x] Fix hardcoded CORS origins in backend code
+- [x] Fix hardcoded API URL in frontend code
+- [x] Update nixpacks.toml with correct CORS origins
 - [ ] Test the fix
 
 ### Implementation Notes
 Working on CORS configuration for production deployment.
 
 **Changes Made:**
-1. Updated `backend/app/main.py` to read CORS_ORIGINS from environment variables instead of hardcoding
-2. Added OPTIONS method to allowed CORS methods for preflight requests
-3. Added debug logging to help troubleshoot CORS issues
-4. Environment variable CORS_ORIGINS is already set correctly in nixpacks.toml
+1. Fixed `backend/app/main.py` to properly read CORS_ORIGINS from environment variables instead of hardcoding `["*"]`
+2. Added better debug logging to help troubleshoot CORS issues
+3. Fixed `frontend/src/utils/index.ts` to use VITE_API_URL environment variable instead of hardcoded URL
+4. Updated `backend/nixpacks.toml` to include multiple CORS origins including localhost for development
+5. Environment variable CORS_ORIGINS now includes both production and development URLs
 
-**Root Cause:** 
-Backend was hardcoding CORS origins instead of reading from environment variables, preventing dynamic configuration in different environments.
+**Root Cause Found:** 
+1. Backend was hardcoding CORS origins as `["*"]` instead of reading from environment variables
+2. Frontend was hardcoding the backend API URL instead of using environment variables
+3. Missing localhost origins in CORS configuration for development testing
 
 ### Tasks
 - [x] Review current CORS setup in backend/app/main.py
