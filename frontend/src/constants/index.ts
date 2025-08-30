@@ -13,7 +13,8 @@ export const API_ENDPOINTS = {
     UPDATE: (id: string) => `/api/posts/${id}`,
     DELETE: (id: string) => `/api/posts/${id}`,
     LIKE: (id: string) => `/api/posts/${id}/like`,
-    UNLIKE: (id: string) => `/api/posts/${id}/like`
+    UNLIKE: (id: string) => `/api/posts/${id}/like`,
+    UPLOAD_IMAGE: '/api/posts/upload-image'
   },
   USERS: {
     PROFILE: (id: string) => `/api/users/${id}`,

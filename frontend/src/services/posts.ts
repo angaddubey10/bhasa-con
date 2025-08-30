@@ -1,5 +1,5 @@
 import { apiClient } from './api'
-import { Post, CreatePostData, UpdatePostData, PaginatedResponse, SearchFilters, SearchResult, UserProfile } from '../types'
+import { Post, CreatePostData, UpdatePostData, PaginatedResponse, SearchFilters, SearchResult } from '../types'
 import { API_ENDPOINTS, PostType, PostStatus } from '../constants'
 
 // Backend post response format
@@ -174,11 +174,66 @@ export class PostsService {
   }
 
   async uploadPostMedia(file: File): Promise<{ url: string; type: string }> {
-    const response = await apiClient.uploadFile<{ url: string; type: string }>(
-      '/upload/post-media',
-      file
-    )
-    return response.data
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+    if (!allowedTypes.includes(file.type)) {
+      throw new Error('Invalid file type. Only JPEG, PNG, and WebP are allowed.')
+    }
+
+    // Validate file size (5MB limit)
+    const maxSize = 5 * 1024 * 1024 // 5MB in bytes
+    if (file.size > maxSize) {
+      throw new Error('File size too large. Maximum 5MB allowed.')
+    }
+
+    console.log('Uploading file:', {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      endpoint: API_ENDPOINTS.POSTS.UPLOAD_IMAGE,
+      formattedSize: `${(file.size / 1024 / 1024).toFixed(2)}MB`
+    })
+
+    try {
+      const response = await apiClient.uploadFile<{ success: boolean; data: { image_url: string } }>(
+        API_ENDPOINTS.POSTS.UPLOAD_IMAGE,
+        file
+      )
+      
+      console.log('Upload response:', response)
+      
+      if (response.data.success && response.data.data?.image_url) {
+        return {
+          url: response.data.data.image_url,
+          type: file.type
+        }
+      } else {
+        console.error('Invalid response format:', response)
+        throw new Error('Upload failed - invalid response format')
+      }
+    } catch (error: any) {
+      console.error('Upload error details:', {
+        error,
+        message: error.message,
+        code: error.code,
+        response: error.response
+      })
+      
+      // Handle different error types
+      if (error.code === '422') {
+        throw new Error('Request validation failed. Please check the file format and ensure it\'s a valid image.')
+      } else if (error.code === '400') {
+        throw new Error(error.message || 'Invalid file. Please check file type and size.')
+      } else if (error.code === '503') {
+        throw new Error('Image upload service is currently unavailable. Please try again later.')
+      } else if (error.code === '500') {
+        throw new Error('Server error during upload. Please try again.')
+      } else if (error.message) {
+        throw new Error(error.message)
+      } else {
+        throw new Error('Failed to upload image. Please try again.')
+      }
+    }
   }
 
   // Bookmark functionality

@@ -21,16 +21,20 @@ docker-compose up --build          # Development
 
 ### Environment Setup
 
-Create your environment configuration files:
+1. **Copy environment template:**
+   ```bash
+   cp .env.example .env
+   ```
 
-```bash
-# Create environment files and configure with your values
-# See docs/EnvironmentSetup.md for all required variables and examples
-touch backend/.env
-touch frontend/.env
-# Edit the files with your actual values, then start services:
-docker-compose up -d
-```
+2. **Configure your environment variables:**
+   - Edit `.env` with your actual values
+   - Update Cloudinary credentials (required for image uploads)
+   - Modify database and security settings as needed
+
+3. **Start the services:**
+   ```bash
+   docker-compose up -d
+   ```
 
 📋 **For detailed environment variables documentation, see [docs/EnvironmentSetup.md](docs/EnvironmentSetup.md)**
 
@@ -124,3 +128,9 @@ services:
 1. Make code changes locally (hot reload enabled)
 2. For database changes: Create and run migrations
 3. Run tests before committing changes
+
+###
+
+```
+docker-compose restart backend
+```

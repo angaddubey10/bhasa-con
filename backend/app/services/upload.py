@@ -1,19 +1,39 @@
 import cloudinary
 import cloudinary.uploader
 from fastapi import UploadFile, HTTPException
+import logging
 import os
 from typing import Optional
 
+# Configure logging for upload service
+logger = logging.getLogger(__name__)
+
 # Configure Cloudinary
-cloudinary.config(
-    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.getenv("CLOUDINARY_API_KEY"),
-    api_secret=os.getenv("CLOUDINARY_API_SECRET")
-)
+CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME")
+CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY")
+CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET")
+
+# Check if Cloudinary is properly configured
+CLOUDINARY_CONFIGURED = all([CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET])
+
+if CLOUDINARY_CONFIGURED:
+    cloudinary.config(
+        cloud_name=CLOUDINARY_CLOUD_NAME,
+        api_key=CLOUDINARY_API_KEY,
+        api_secret=CLOUDINARY_API_SECRET
+    )
 
 
 async def upload_image(file: UploadFile, folder: str = "bhasaconnect") -> str:
     """Upload image to Cloudinary and return URL"""
+    
+    # Check if Cloudinary is configured
+    if not CLOUDINARY_CONFIGURED:
+        raise HTTPException(
+            status_code=503,
+            detail="Image upload service is not configured. Please contact administrator."
+        )
+    
     try:
         # Validate file type
         allowed_types = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
@@ -48,16 +68,26 @@ async def upload_image(file: UploadFile, folder: str = "bhasaconnect") -> str:
         return result["secure_url"]
         
     except Exception as e:
+        logger.error(f"Error uploading image: {e}")
         if isinstance(e, HTTPException):
             raise e
         raise HTTPException(
             status_code=500,
-            detail="Failed to upload image"
+            detail="Failed to upload image",
+            headers={"X-Error-Detail": str(e)}
         )
 
 
 async def upload_profile_picture(file: UploadFile) -> str:
     """Upload profile picture with specific transformations"""
+    
+    # Check if Cloudinary is configured
+    if not CLOUDINARY_CONFIGURED:
+        raise HTTPException(
+            status_code=503,
+            detail="Image upload service is not configured. Please contact administrator."
+        )
+    
     try:
         # Validate file type
         allowed_types = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
@@ -91,6 +121,7 @@ async def upload_profile_picture(file: UploadFile) -> str:
         return result["secure_url"]
         
     except Exception as e:
+        logger.error(f"Error uploading profile picture: {e}")
         if isinstance(e, HTTPException):
             raise e
         raise HTTPException(

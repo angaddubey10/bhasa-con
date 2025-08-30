@@ -46,14 +46,25 @@ export interface Post {
 
 export interface CreatePostData {
   content: string
-  type: PostType
-  mediaUrl?: string
-  linkUrl?: string
-  tags?: string[]
+  language?: string
+  image_url?: string
 }
 
 export interface UpdatePostData extends Partial<CreatePostData> {
   status?: PostStatus
+}
+
+// Image upload types
+export interface ImageUploadResponse {
+  success: boolean
+  message: string
+  data: {
+    image_url: string
+  }
+}
+
+export interface ImageUploadError {
+  detail: string
 }
 
 // Comment types

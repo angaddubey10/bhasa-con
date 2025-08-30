@@ -95,20 +95,50 @@ export class ApiClient {
     
     if (additionalData) {
       Object.entries(additionalData).forEach(([key, value]) => {
-        formData.append(key, JSON.stringify(value))
+        formData.append(key, typeof value === 'string' ? value : JSON.stringify(value))
       })
     }
 
-    return this.request<T>(endpoint, {
-      method: 'POST',
-      body: formData,
-      headers: {
-        // Remove Content-Type to let browser set it with boundary
-        ...Object.fromEntries(
-          Object.entries(this.headers).filter(([key]) => key !== 'Content-Type')
+    // Create headers object with Authorization but without Content-Type 
+    // (browser will set Content-Type with proper boundary for multipart/form-data)
+    const uploadHeaders: Record<string, string> = {}
+    if (this.headers['Authorization']) {
+      uploadHeaders['Authorization'] = this.headers['Authorization']
+    }
+
+    try {
+      const url = formatApiUrl(endpoint)
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+        headers: uploadHeaders
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        // Backend returns error in { message: "...", detail?: "..." } format
+        throw new ApiError(
+          data.message || data.detail || data.error || 'An error occurred', 
+          response.status.toString()
         )
       }
-    })
+
+      // Backend response format is the actual response, not wrapped
+      return {
+        data: data,
+        message: data.message,
+        success: data.success || true
+      }
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error
+      }
+      
+      throw new ApiError(
+        error instanceof Error ? error.message : 'Network error occurred'
+      )
+    }
   }
 }
 
