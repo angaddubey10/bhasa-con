@@ -89,7 +89,7 @@ export class PostsService {
 
   async getUserPosts(userId: string, page: number = 1, limit: number = 20): Promise<any> {
     const response = await apiClient.get<any>(
-      `${API_ENDPOINTS.POSTS.LIST}?author=${userId}&page=${page}&limit=${limit}`
+      `${API_ENDPOINTS.POSTS.USER_POSTS(userId)}?page=${page}&limit=${limit}`
     )
     
     // Transform backend response to frontend format

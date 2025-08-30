@@ -19,6 +19,50 @@ export interface User {
 export interface UserProfile extends User {
   isFollowing?: boolean
   isFollowedBy?: boolean
+  postsCount?: number
+  followersCount?: number
+  followingCount?: number
+}
+
+// User search result interface (matches backend UserListResponse)
+export interface UserSearchResult {
+  id: string
+  first_name: string
+  last_name: string
+  profile_picture?: string
+  bio?: string
+  place?: string
+  state?: string
+  is_following: boolean
+}
+
+// Full user profile response (matches backend UserResponse)
+export interface UserProfileResponse {
+  id: string
+  email: string
+  first_name: string
+  last_name: string
+  profile_picture?: string
+  bio: string
+  languages: string[]
+  place?: string
+  state?: string
+  follower_count: number
+  following_count: number
+  post_count: number
+  is_following: boolean
+  created_at: string
+}
+
+// Paginated response for user searches
+export interface PaginatedUserSearchResponse {
+  success: boolean
+  data: {
+    items: UserSearchResult[]
+    page: number
+    limit: number
+    has_next: boolean
+  }
 }
 
 // Post types
