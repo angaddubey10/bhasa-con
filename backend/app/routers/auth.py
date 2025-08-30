@@ -7,8 +7,15 @@ from app.schemas.user import UserRegister, UserLogin, UserResponse
 from app.services.auth import create_user, authenticate_user
 from app.utils.dependencies import get_current_user
 from app.models.user import User
+import logging
+
+# Configure logging for auth router
+logger = logging.getLogger(__name__)
+logger.info("🔐 Auth router module loading...")
 
 router = APIRouter()
+logger.info(f"✅ Auth router created: {router}")
+logger.info("🔐 Auth router module loaded successfully")
 
 
 @router.post(
@@ -269,3 +276,15 @@ async def logout():
         "success": True,
         "message": "Logout successful"
     }
+
+# Debug: Log all registered routes in this router
+logger.info("=== AUTH ROUTER ENDPOINTS ===")
+endpoint_count = len(router.routes)
+logger.info(f"Auth router has {endpoint_count} endpoints:")
+for i, route in enumerate(router.routes, 1):
+    if hasattr(route, 'methods') and hasattr(route, 'path'):
+        methods = list(route.methods)
+        logger.info(f"{i}. {methods} {route.path}")
+    elif hasattr(route, 'path'):
+        logger.info(f"{i}. {route.path}")
+logger.info("=== END AUTH ROUTER ENDPOINTS ===")

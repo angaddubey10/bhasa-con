@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File,
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
 import uuid
+import logging
 from app.database import get_db
 from app.schemas.user import UserProfile, UserResponse, UserListResponse, PasswordUpdate
 from app.services.user import (
@@ -12,7 +13,13 @@ from app.services.upload import upload_profile_picture
 from app.utils.dependencies import get_current_user, get_current_user_optional
 from app.models.user import User
 
+# Configure logging for users router
+logger = logging.getLogger(__name__)
+logger.info("👤 Users router module loading...")
+
 router = APIRouter()
+logger.info(f"✅ Users router created: {router}")
+logger.info("👤 Users router module loaded successfully")
 
 
 @router.get("/profile", response_model=dict)
@@ -158,3 +165,15 @@ async def unfollow_user_endpoint(
             "success": False,
             "message": "Not following this user"
         }
+
+# Debug: Log all registered routes in this router
+logger.info("=== USERS ROUTER ENDPOINTS ===")
+endpoint_count = len(router.routes)
+logger.info(f"Users router has {endpoint_count} endpoints:")
+for i, route in enumerate(router.routes, 1):
+    if hasattr(route, 'methods') and hasattr(route, 'path'):
+        methods = list(route.methods)
+        logger.info(f"{i}. {methods} {route.path}")
+    elif hasattr(route, 'path'):
+        logger.info(f"{i}. {route.path}")
+logger.info("=== END USERS ROUTER ENDPOINTS ===")

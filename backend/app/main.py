@@ -7,29 +7,64 @@ from fastapi.openapi.utils import get_openapi
 from contextlib import asynccontextmanager
 import logging
 
-from app.database import engine, Base
-from app.routers import auth, users, posts
-
-# Configure logging
+# Configure logging first
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Debug: Log import process
+logger.info("Starting imports...")
+
+try:
+    from app.database import engine, Base
+    logger.info("✅ Database imports successful")
+except Exception as e:
+    logger.error(f"❌ Database import failed: {e}")
+    raise
+
+try:
+    from app.routers import auth, users, posts
+    logger.info("✅ Router imports successful")
+    logger.info(f"Auth router type: {type(auth.router)}")
+    logger.info(f"Users router type: {type(users.router)}")
+    logger.info(f"Posts router type: {type(posts.router)}")
+except Exception as e:
+    logger.error(f"❌ Router imports failed: {e}")
+    raise
+
+logger.info("All imports completed successfully")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    logger.info("Starting up the Bhasa Con API...")
+    logger.info("🚀 Starting up the Bhasa Con API...")
+    logger.info(f"FastAPI app created: {app}")
+    logger.info(f"App title: {app.title}")
+    
     try:
         async with engine.begin() as conn:
             # Create tables
             await conn.run_sync(Base.metadata.create_all)
-        logger.info("Database tables created successfully")
+        logger.info("✅ Database tables created successfully")
     except Exception as e:
-        logger.error(f"Error creating database tables: {e}")
+        logger.error(f"❌ Error creating database tables: {e}")
+        # Don't raise here to see if routers still load
+    
+    # Log routes after startup
+    logger.info("=== POST-STARTUP ROUTES ===")
+    route_count = len(app.routes)
+    logger.info(f"Total routes registered: {route_count}")
+    for i, route in enumerate(app.routes, 1):
+        if hasattr(route, 'methods') and hasattr(route, 'path'):
+            methods = list(route.methods)
+            logger.info(f"{i}. {methods} {route.path}")
+        elif hasattr(route, 'path'):
+            logger.info(f"{i}. {route.path}")
+    logger.info("=== END POST-STARTUP ROUTES ===")
     
     yield
     
     # Shutdown
-    logger.info("Shutting down the Bhasa Con API...")
+    logger.info("🛑 Shutting down the Bhasa Con API...")
     await engine.dispose()
 
 # Security scheme for OpenAPI
@@ -239,10 +274,76 @@ async def read_root():
         }
     }
 
-# Include routers with comprehensive configuration
-app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
-app.include_router(users.router, prefix="/api/users", tags=["Users"])
-app.include_router(posts.router, prefix="/api/posts", tags=["Posts"])
+# Debug endpoint to check routes at runtime
+@app.get(
+    "/debug/routes",
+    tags=["Health"],
+    summary="Debug Routes",
+    description="List all registered routes for debugging purposes."
+)
+async def debug_routes():
+    """
+    Debug endpoint to list all registered routes.
+    Helpful for troubleshooting router loading issues in production.
+    """
+    routes_info = []
+    for route in app.routes:
+        if hasattr(route, 'methods') and hasattr(route, 'path'):
+            routes_info.append({
+                "methods": list(route.methods),
+                "path": route.path,
+                "name": getattr(route, 'name', 'unnamed')
+            })
+        elif hasattr(route, 'path'):
+            routes_info.append({
+                "path": route.path,
+                "name": getattr(route, 'name', 'unnamed')
+            })
+    
+    return {
+        "success": True,
+        "total_routes": len(routes_info),
+        "routes": routes_info
+    }
+
+# Include routers with comprehensive configuration and debug logging
+logger.info("Starting router inclusion process...")
+
+try:
+    logger.info("Loading auth router...")
+    app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
+    logger.info("✅ Auth router loaded successfully")
+except Exception as e:
+    logger.error(f"❌ Failed to load auth router: {e}")
+    raise
+
+try:
+    logger.info("Loading users router...")
+    app.include_router(users.router, prefix="/api/users", tags=["Users"])
+    logger.info("✅ Users router loaded successfully")
+except Exception as e:
+    logger.error(f"❌ Failed to load users router: {e}")
+    raise
+
+try:
+    logger.info("Loading posts router...")
+    app.include_router(posts.router, prefix="/api/posts", tags=["Posts"])
+    logger.info("✅ Posts router loaded successfully")
+except Exception as e:
+    logger.error(f"❌ Failed to load posts router: {e}")
+    raise
+
+logger.info("All routers loaded successfully!")
+
+# Debug: List all registered routes
+logger.info("=== REGISTERED ROUTES DEBUG ===")
+for route in app.routes:
+    if hasattr(route, 'methods') and hasattr(route, 'path'):
+        methods = list(route.methods)
+        logger.info(f"Route: {methods} {route.path}")
+    elif hasattr(route, 'path'):
+        logger.info(f"Route: {route.path}")
+logger.info("=== END REGISTERED ROUTES ===")
 
 if __name__ == "__main__":
     import uvicorn
