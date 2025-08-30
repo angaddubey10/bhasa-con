@@ -26,8 +26,13 @@ app = FastAPI(
 )
 
 # CORS Configuration
-cors_origins_str = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:5173")
-cors_origins = [origin.strip() for origin in cors_origins_str.split(",")]
+cors_origins = [
+    "https://bhasa-con-production.up.railway.app",
+    "https://bc-backend-production-7180.up.railway.app", 
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "https://*.railway.app", # Allow all Railway subdomains    
+]
 
 # Add some debug logging for CORS configuration
 print(f"CORS Origins configured: {cors_origins}")
