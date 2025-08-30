@@ -1,10 +1,10 @@
-# Virtual environments
-.venv*
-
-# Python cache files
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+
+# C extensions
+*.so
 
 # Distribution / packaging
 .Python
@@ -26,13 +26,18 @@ wheels/
 MANIFEST
 
 # PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
 
 # Unit test / coverage reports
 htmlcov/
 .tox/
-.nox/
 .coverage
 .coverage.*
 .cache
@@ -42,16 +47,63 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 
-# Environments
+# Virtual environments
 .env
 .venv
 env/
 venv/
+.venvapi/
+.venvtest/
 ENV/
 env.bak/
 venv.bak/
 
-# IDE
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Log files
+*.log
+logs/
+
+# IDE and Editor files
 .vscode/
 .idea/
 *.swp
@@ -66,5 +118,37 @@ venv.bak/
 .Trashes
 ehthumbs.db
 Thumbs.db
-frontend/src/utils/index.ts
-*__pycache__*
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Node modules (if any Node.js tools are used)
+node_modules/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Local configuration files that shouldn't be shared
+config.local.py
+settings.local.py
+
+# Upload directories
+uploads/
+media/
+
+# Coverage reports
+htmlcov/
+.coverage
+
+# Alembic
+alembic.ini.bak
+
+# FastAPI specific
+.pytest_cache/
+
+# Local development files
+test.db
+dev.db
+local.db
