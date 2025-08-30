@@ -16,7 +16,8 @@ export default defineConfig({
     allowedHosts: [
       'localhost',
       '127.0.0.1',
-      'bhasa-con-production.up.railway.app'
+      'bhasa-con-production.up.railway.app',
+      'app.lovme.in'
     ],
     watch: {
       usePolling: true, // Enable for Docker on Windows
@@ -28,7 +29,8 @@ export default defineConfig({
     allowedHosts: [
       'localhost',
       '127.0.0.1',
-      'bhasa-con-production.up.railway.app'
+      'bhasa-con-production.up.railway.app',
+      'app.lovme.in'
     ]
   }
 })
