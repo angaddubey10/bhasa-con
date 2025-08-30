@@ -1,3 +1,6 @@
 export { PostCard } from './PostCard'
 export { CreatePost } from './CreatePost'
 export { PostList } from './PostList'
+export { CommentForm } from './CommentForm'
+export { CommentItem } from './CommentItem'
+export { CommentsList } from './CommentsList'

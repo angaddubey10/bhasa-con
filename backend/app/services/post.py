@@ -7,6 +7,7 @@ from app.models.user import User
 from app.models.post import Post
 from app.models.like import Like
 from app.models.follow import Follow
+from app.models.comment import Comment
 from app.schemas.post import PostCreate, PostResponse
 from app.schemas.user import UserListResponse
 from app.utils.exceptions import PostNotFoundException, UnauthorizedOperationException
@@ -46,6 +47,14 @@ async def get_post_by_id(db: AsyncSession, post_id: uuid.UUID, current_user: Opt
     )
     like_count = like_count_result.scalar() or 0
     
+    # Get comment count
+    comment_count_result = await db.execute(
+        select(func.count(Comment.id)).where(
+            and_(Comment.post_id == post_id, Comment.is_deleted == False)
+        )
+    )
+    comment_count = comment_count_result.scalar() or 0
+    
     # Check if current user liked this post
     is_liked = False
     if current_user:
@@ -72,6 +81,7 @@ async def get_post_by_id(db: AsyncSession, post_id: uuid.UUID, current_user: Opt
         language=post.language,
         image_url=post.image_url,
         like_count=like_count,
+        comment_count=comment_count,
         is_liked=is_liked,
         created_at=post.created_at
     )
@@ -126,6 +136,14 @@ async def get_posts_feed(db: AsyncSession, user_id: Optional[uuid.UUID] = None, 
         )
         like_count = like_count_result.scalar() or 0
         
+        # Get comment count
+        comment_count_result = await db.execute(
+            select(func.count(Comment.id)).where(
+                and_(Comment.post_id == post.id, Comment.is_deleted == False)
+            )
+        )
+        comment_count = comment_count_result.scalar() or 0
+        
         # Check if current user liked this post
         is_liked = False
         if user_id:
@@ -162,6 +180,7 @@ async def get_posts_feed(db: AsyncSession, user_id: Optional[uuid.UUID] = None, 
             language=post.language,
             image_url=post.image_url,
             like_count=like_count,
+            comment_count=comment_count,
             is_liked=is_liked,
             created_at=post.created_at
         ))
@@ -192,6 +211,14 @@ async def get_user_posts(db: AsyncSession, user_id: uuid.UUID, page: int = 1, li
         )
         like_count = like_count_result.scalar() or 0
         
+        # Get comment count
+        comment_count_result = await db.execute(
+            select(func.count(Comment.id)).where(
+                and_(Comment.post_id == post.id, Comment.is_deleted == False)
+            )
+        )
+        comment_count = comment_count_result.scalar() or 0
+        
         # Check if current user liked this post
         is_liked = False
         if current_user:
@@ -218,6 +245,7 @@ async def get_user_posts(db: AsyncSession, user_id: uuid.UUID, page: int = 1, li
             language=post.language,
             image_url=post.image_url,
             like_count=like_count,
+            comment_count=comment_count,
             is_liked=is_liked,
             created_at=post.created_at
         ))

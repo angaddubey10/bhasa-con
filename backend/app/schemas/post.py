@@ -36,6 +36,7 @@ class PostResponse(BaseModel):
     language: str
     image_url: Optional[str] = None
     like_count: int = 0
+    comment_count: int = 0
     is_liked: bool = False
     created_at: datetime
 

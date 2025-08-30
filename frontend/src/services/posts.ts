@@ -19,6 +19,7 @@ interface BackendPostResponse {
   language: string
   image_url?: string
   like_count: number
+  comment_count?: number
   is_liked: boolean
   created_at: string
 }
@@ -51,7 +52,7 @@ const transformBackendPost = (backendPost: BackendPostResponse): Post => {
     linkTitle: undefined,
     linkDescription: undefined,
     likesCount: backendPost.like_count,
-    commentsCount: 0, // Backend doesn't provide this yet
+    commentsCount: backendPost.comment_count || 0,
     sharesCount: 0, // Backend doesn't provide this yet
     isLiked: backendPost.is_liked,
     isBookmarked: false, // Backend doesn't provide this yet

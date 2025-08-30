@@ -15,6 +15,11 @@ export const API_ENDPOINTS = {
     LIKE: (id: string) => `/api/posts/${id}/like`,
     UNLIKE: (id: string) => `/api/posts/${id}/like`
   },
+  COMMENTS: {
+    LIST: (postId: string) => `/api/posts/${postId}/comments`,
+    CREATE: (postId: string) => `/api/posts/${postId}/comments`,
+    DELETE: (commentId: string) => `/api/comments/${commentId}`
+  },
   USERS: {
     PROFILE: (id: string) => `/api/users/${id}`,
     FOLLOW: (id: string) => `/api/users/${id}/follow`,

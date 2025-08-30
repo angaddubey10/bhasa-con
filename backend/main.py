@@ -10,8 +10,11 @@ from datetime import datetime
 from app.config import settings
 from app.database import engine, Base
 
+# Import all models to ensure they're registered with SQLAlchemy
+from app.models import User, Post, Like, Follow, Comment
+
 # Import route modules
-from app.routers import auth, users, posts
+from app.routers import auth, users, posts, comments
 
 # Setup logging
 logging.basicConfig(level=getattr(logging, settings.log_level))
@@ -61,6 +64,7 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/api/users", tags=["Users"])
 app.include_router(posts.router, prefix="/api/posts", tags=["Posts"])
+app.include_router(comments.router, prefix="/api", tags=["Comments"])
 
 # Root endpoint
 @app.get("/")
