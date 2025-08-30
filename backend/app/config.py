@@ -38,6 +38,8 @@ class Settings:
             "http://localhost:3000",
             "http://localhost:8000",
             "https://*.railway.app",
+            "https://app.lovme.in",
+            "https://api.lovme.in",
         ]
     
     # Logging
