@@ -2,8 +2,8 @@
 
 - Start with analysis. Read the codebase, identify relevant files, and clarify requirements.
 - Document all planning, task lists, implementation notes, and reviews in a single workflow.md file per branch.
-- Location: `docs/<gitbranchname>/workflow.md` (e.g., branch `user/foo/bar` → `docs/user/foo/bar/workflow.md`). Use clear sections (Plan, Implementation Notes, Tasks, Review, Decisions, etc.)
-- Always resume by reading the latest `docs/<gitbranchname>/workflow.md` for context.
+- Location: `copilotdocs/<gitbranchname>/workflow.md` (e.g., branch `user/foo/bar` → `copilotdocs/user/foo/bar/workflow.md`). Use clear sections (Plan, Implementation Notes, Tasks, Review, Decisions, etc.)
+- Always resume by reading the latest `copilotdocs/<gitbranchname>/workflow.md` for context.
 - The plan should have a list of todo items that you can check off as you complete them. Plan must factor in unit testing, edge cases and defensive programming.
 - Before you begin working, check in with me and I will verify the plan
 - Mark a task complete only when all relevant tests pass and the code is validated in a real build.
@@ -67,7 +67,7 @@ docker compose
 project-root/
 ├── src/           # Source code
 ├── tests/         # Test files
-├── docs/          # Documentation
+├── copilotdocs/          # Documentation
 └── ...            # Other directories
 ```
 
@@ -90,10 +90,10 @@ project-root/
 
 ## Knowledge & Context Management
 
-- Track all in-progress work and decisions in `docs/<gitbranchname>/workflow.md` files. Keep them up to date.
+- Track all in-progress work and decisions in `copilotdocs/<gitbranchname>/workflow.md` files. Keep them up to date.
 - Add or update README.md as needed.
 - Every README must clearly state the module's purpose, key responsibilities, build or usage instructions, and any critical design constraints in a concise, readable format. For non-trivial modules, include a high-level architecture diagram. If the module interacts with other subsystems, provide a dependency or interaction diagram.
-- **Context drift**: If losing track, refer back to `docs/<gitbranchname>/workflow.md` files and original task requirements. Always start sessions by reading existing documentation to rebuild context.
+- **Context drift**: If losing track, refer back to `copilotdocs/<gitbranchname>/workflow.md` files and original task requirements. Always start sessions by reading existing documentation to rebuild context.
 
 ## Development Checklist
 
@@ -107,11 +107,11 @@ Before marking any task complete:
 - [ ] Documentation is current
 - [ ] Performance impact assessed
 - [ ] Security considerations reviewed
-- [ ] Review section in `docs/<gitbranchname>/workflow.md` files is updated
+- [ ] Review section in `copilotdocs/<gitbranchname>/workflow.md` files is updated
 - [ ] Dependencies are up to date and secure
 
 ## Key Principles
 
 - Simplicity and safety over cleverness.
 - Test everything, document only what matters, minimize change.
-- Keep `docs/<gitbranchname>/workflow.md` files current—this is the single source of truth.
+- Keep `copilotdocs/<gitbranchname>/workflow.md` files current—this is the single source of truth.
